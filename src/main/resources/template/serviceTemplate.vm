@@ -1,0 +1,12 @@
+package ${serviceClass.packageName};
+
+import com.leoman.common.service.ICommonService;
+import ${serviceClass.packageName}.${entity.name};
+import org.springframework.data.domain.Page;
+
+public interface ${serviceClass.name} extends GenericManager<${entity.name}> {
+
+	#set($entityName = ${entity.name.substring(0, 1).toLowerCase()} + ${entity.name.substring(1)})
+    public Page<${entity.name}> findPage(${entity.name} ${entityName}, int pagenum, int pagesize);
+
+}

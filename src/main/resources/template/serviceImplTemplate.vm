@@ -1,0 +1,41 @@
+package ${serviceImplClass.packageName};
+
+import com.leoman.common.service.impl.GenericManagerImpl;
+import ${serviceImplClass.packageName}.${daoClass.name};
+import ${serviceImplClass.packageName}.${entity.name};
+import ${serviceImplClass.packageName}.${serviceClass.name};
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class ${serviceImplClass.name} extends GenericManagerImpl<${entity.name}, ${daoClass.name}> implements ${serviceClass.name} {
+
+	#set($entityName = ${entity.name.substring(0, 1).toLowerCase()} + ${entity.name.substring(1)})
+    @Autowired
+    private ${daoClass.name} dao;
+	
+    @Override
+    public Page<${entity.name}> findPage(final ${entity.name} ${entityName}, int pagenum, int pagesize) {
+        Specification<${entity.name}> spec = new Specification<${entity.name}>() {
+            @Override
+            public Predicate toPredicate(Root<${entity.name}> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> list = new ArrayList<Predicate>();
+                
+                return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
+            }
+        };
+        return dao.findAll(spec, new PageRequest(pagenum - 1, pagesize, Sort.Direction.DESC, "id"));
+    }
+}
