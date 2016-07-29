@@ -62,8 +62,8 @@
                 <span class="menu-item">任务管理</span>
             </a>
             <ul class="list-unstyled menu-item">
-                <li><a href="${contextPath}/admin/admin/index">益起来列表</a></li>
-                <li><a href="${contextPath}/admin/admin/index">脑洞虚设列表</a></li>
+                <li><a href="${contextPath}/admin/task/yql/index">益起来列表</a></li>
+                <li><a href="${contextPath}/admin/task/ndxs/index">脑洞虚设列表</a></li>
             </ul>
         </li>
         <li class="dropdown">
