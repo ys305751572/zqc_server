@@ -10,6 +10,6 @@ import org.springframework.data.domain.Page;
  */
 public interface TaskService extends GenericManager<Task>{
 
-    public Page<Task> findPage(Task task,Integer taskStatus,int currnetPage,int pagesize);
+    public Page<Task> findPage(Task task,Integer taskStatus,Integer checkpointStatus,int currnetPage,int pagesize);
 
 }

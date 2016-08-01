@@ -10,6 +10,6 @@ import org.springframework.data.domain.Page;
  */
 public interface TaskJoinService extends GenericManager<TaskJoin>{
 
-    public Page<TaskJoin> findPage(String mobileName,String nickName,TaskJoin taskJoin,int currnetPage,int pagesize);
+    public Page<TaskJoin> findPage(String mobile,String teamName,String nickName,TaskJoin taskJoin,int currnetPage,int pagesize);
 
 }

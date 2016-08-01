@@ -21,23 +21,15 @@
         <!-- 查询条件 -->
         <div class="block-area" id="search">
             <div class="row">
-                <input type="hidden" value="1" id="type">
                 <div class="col-md-2 form-group">
-                    <input type="text" class="input-sm form-control" id="name" name="name" placeholder="活动名称"/>
+                    <input type="text" class="input-sm form-control" id="name" name="name" placeholder="商品名称"/>
                 </div>
                 <div class="col-md-2 form-group">
-                    <select id="joinType" name="joinType" class="select">
-                        <option value="">活动类型</option>
-                        <option value="0">个人</option>
-                        <option value="1">团体</option>
-                    </select>
-                </div>
-                <div class="col-md-2 form-group">
-                    <select id="taskStatus" name="taskStatus" class="select">
-                        <option value="">任务状态</option>
-                        <option value="0">待开始</option>
-                        <option value="1">已结束</option>
-                        <option value="2">进行中</option>
+                    <select id="type" name="type" class="select">
+                        <option value="">商品类型</option>
+                        <option value="0">实物</option>
+                        <option value="1">众筹</option>
+                        <option value="2">广告位</option>
                     </select>
                 </div>
             </div>
@@ -50,7 +42,7 @@
             <div class="row">
                 <ul class="list-inline list-mass-actions">
                     <li>
-                        <a data-toggle="modal" onclick="$task.fn.add()" title="新增" class="tooltips">
+                        <a data-toggle="modal" onclick="$product.fn.add()" title="新增" class="tooltips">
                             <i class="sa-list-add"></i>
                         </a>
                     </li>
@@ -60,7 +52,7 @@
                         </a>
                     </li>
                     <li class="show-on" style="display: none;">
-                        <a href="javascript:void(0)" onclick="$task.fn.batchDel();" title="删除" class="tooltips">
+                        <a href="javascript:void(0)" onclick="$product.fn.batchDel();" title="删除" class="tooltips">
                             <i class="sa-list-delete"></i>
                         </a>
                     </li>
@@ -74,11 +66,10 @@
                 <thead>
                 <tr>
                     <th><input type="checkbox" class="pull-left list-parent-check"/></th>
-                    <th>活动名称</th>
+                    <th>商品名称</th>
                     <th>新增时间</th>
-                    <th>任务类型</th>
-                    <th>任务状态</th>
-                    <th>积分/益米</th>
+                    <th>分类</th>
+                    <th>益米</th>
                     <th>状态</th>
                     <th>操作</th>
                 </tr>
@@ -93,26 +84,26 @@
 <%@ include file="../inc/new/del.jsp" %>
 
 <script>
-    $task = {
+    $product = {
         v: {
             list: [],
             dTable: null
         },
         fn: {
             init: function () {
-                $task.fn.dataTableInit();
+                $product.fn.dataTableInit();
                 $("#c_search").click(function () {
-                    $task.v.dTable.ajax.reload();
+                    $product.v.dTable.ajax.reload();
                 });
 
             },
             dataTableInit: function () {
-                $task.v.dTable = $leoman.dataTable($('#dataTables'), {
+                $product.v.dTable = $leoman.dataTable($('#dataTables'), {
                     "processing": true,
                     "serverSide": true,
                     "searching": false,
                     "ajax": {
-                        "url": "${contextPath}/admin/task/list",
+                        "url": "${contextPath}/admin/product/list",
                         "type": "POST"
                     },
                     "columns": [
@@ -140,77 +131,58 @@
                             "sDefaultContent" : ""
                         },
                         {
-                            "data": "joinType",
+                            "data": "type",
                             render: function(data){
                                 if(data==0){
-                                    return "个人";
+                                    return "实物";
+                                }else if(data==1){
+                                    return "众筹";
                                 }else{
-                                    return "团队";
+                                    return "广告位";
                                 }
                             },
                             "sDefaultContent" : ""
                         },
-                        {"data": "taskStatus","sDefaultContent" : ""},
+                        {"data": "ym","sDefaultContent" : ""},
                         {
-                            "data": "",
+                            "data": "raiseStatus",
                             render: function (data,type,full) {
-                                var rewardIntegral = full.rewardIntegral;
-                                var rewardYm = full.rewardYm;
-                                return rewardIntegral+"/"+rewardYm;
-                            },
-                            "sDefaultContent" : ""},
-                        {
-                            "data": "status",
-                            render: function (data,type,full) {
-                                if(data==0){
-                                    return "——"
+                                var type = full.type;
+                                if(type==1) {
+                                    return data;
                                 }else{
-                                    return "不可用"
+                                    return "——";
                                 }
+
                             },
                             "sDefaultContent" : ""},
                         {
                             "data": "id",
                             "render": function (data,type,full) {
-                                var detail = "<button title='查看' class='btn btn-primary btn-circle detail' onclick='$task.fn.detail("+ data +")'> " +
+                                var type = full.type;
+                                var detail = "<button title='查看' class='btn btn-primary btn-circle detail' onclick=\"$product.fn.detail(\'" + data + "\')\">" +
                                         "<i class='fa fa-eye'></i></button>";
-                                var id = full.id;
-                                var st = full.status;
-                                var joinType = full.joinType;
-                                if(st==0){
-                                    var status = "<button title='禁用' class='btn btn-primary btn-circle detail' onclick=\"$task.fn.changeStatus(\'" + id + "\',\'" + st + "\')\"> " +
-                                            "<i class='fa fa fa-ban'></i></button>";
-                                }else if(st==1){
-                                    var status = "<button title='解禁' class='btn btn-primary btn-circle detail' onclick=\"$task.fn.changeStatus(\'" + id + "\',\'" + st + "\')\">" +
-                                            "<i class='fa fa-check'></i></button>";
-                                }
-                                var taskJoin = "<button title='报名' class='btn btn-primary btn-circle detail' onclick=\"$task.fn.taskJoin(\'" + id + "\',\'" + joinType + "\')\">" +
+                                var edit = "<button title='编辑' class='btn btn-primary btn-circle detail' onclick='$product.fn.edit("+ data +")'> " +
                                         "<i class='fa fa-eye'></i></button>";
-                                return detail +"&nbsp;"+ status +"&nbsp;"+ taskJoin;
+                                var del = "<button title='删除' class='btn btn-primary btn-circle detail' onclick=\"$product.fn.del(\'" + data + "\')\">" +
+                                        "<i class='fa fa-eye'></i></button>";
+                                return detail +"&nbsp;"+ edit +"&nbsp;"+ del;
                             }
                         }
                     ],
                     "fnServerParams": function (aoData) {
                         aoData.name = $("#name").val();
-                        aoData.joinType = $("#joinType").val();
-                        aoData.taskStatus = $("#taskStatus").val();
                         aoData.type = $("#type").val();
                     }
                 });
             },
-            "changeStatus": function (id,st) {
-                var tempStatus = 0;
-                if(st==0){
-                    $('#showText').html('您确定要禁用该任务吗？');
-                    tempStatus = 1;
-                }else if(st==1){
-                    $('#showText').html('您确定要解禁该任务吗？');
-                }
+            "del": function (id) {
+                $('#showText').html('您确定要彻底删除该商品吗？');
                 $("#delete").modal("show");
                 $("#confirm").off("click");
                 $("#confirm").on("click",function(){
                     $.ajax({
-                        "url": "${contextPath}/admin/task/status",
+                        "url": "${contextPath}/admin/product/del",
                         "data": {
                             "id": id,
                             "status":tempStatus
@@ -220,7 +192,7 @@
                         success: function (result) {
                             if (result.status) {
                                 $("#delete").modal("hide");
-                                $task.v.dTable.ajax.reload(null,false);
+                                $product.v.dTable.ajax.reload(null,false);
                             } else {
                                 $common.fn.notify("操作失败", "error");
                             }
@@ -237,7 +209,7 @@
                 if (ids.length > 0){
                     $("#confirm").on("click",function(){
                         $.ajax({
-                            "url": "${contextPath}/admin/task/batchDel",
+                            "url": "${contextPath}/admin/product/batchDel",
                             "data": {
                                 ids:JSON.stringify(ids)
                             },
@@ -246,7 +218,7 @@
                             success: function (result) {
                                 if (result.status) {
                                     $("#delete").modal("hide");
-                                    $task.v.dTable.ajax.reload(null,false);
+                                    $product.v.dTable.ajax.reload(null,false);
                                 } else {
                                     $common.fn.notify("操作失败", "error");
                                 }
@@ -256,22 +228,17 @@
                 }
             },
             detail: function(id){
-                var type = $("#type").val();
-                window.location.href = "${contextPath}/admin/task/detail?id=" + id+"&type="+type;
+                window.location.href = "${contextPath}/admin/product/detail?id="+id;
             },
             add: function(){
-                var type = $("#type").val();
-                window.location.href = "${contextPath}/admin/task/add?type="+type;
-            },
-            taskJoin: function(id,joinType){
-                window.location.href = "${contextPath}/admin/taskJoin/index?taskId="+id+"&joinType="+joinType;
+                window.location.href = "${contextPath}/admin/product/add";
             },
             responseComplete: function (result, action) {
                 if (result.status) {
                     if (action) {
-                        $task.v.dTable.ajax.reload(null, false);
+                        $product.v.dTable.ajax.reload(null, false);
                     } else {
-                        $task.v.dTable.ajax.reload();
+                        $product.v.dTable.ajax.reload();
                     }
                     $common.fn.notify(result.msg);
                 } else {
@@ -279,10 +246,9 @@
                 }
             }
         }
-    }
+    };
     $(function () {
-        $task.fn.init();
-
+        $product.fn.init();
     })
 </script>
 <script>

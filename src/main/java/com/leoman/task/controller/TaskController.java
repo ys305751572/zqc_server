@@ -64,9 +64,9 @@ public class TaskController extends GenericEntityController<Task,Task,TaskServic
      */
     @RequestMapping(value = "/list")
     @ResponseBody
-    public Map<String, Object> list(Task task, Integer start, Integer length, Integer draw,Integer taskStatus) {
+    public Map<String, Object> list(Task task, Integer start, Integer length, Integer draw,Integer taskStatus,Integer checkpointStatus) {
         int currentPage = getPageNum(start, length);
-        Page<Task> page = taskService.findPage(task,taskStatus, currentPage, length);
+        Page<Task> page = taskService.findPage(task,taskStatus,checkpointStatus, currentPage, length);
         return DataTableFactory.fitting(draw, page);
     }
 
@@ -114,24 +114,38 @@ public class TaskController extends GenericEntityController<Task,Task,TaskServic
      * @return
      */
     @RequestMapping(value = "/yql/save")
+    @ResponseBody
     public Result yqlSave(Task task, @RequestParam(value = "imageFile",required = false) MultipartFile imageFile, String detail){
         try{
-            if(imageFile!=null && imageFile.getSize()>0) {
-                FileBo fileBo = null;
-                try {
-                    fileBo = FileUtil.save(imageFile);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if (fileBo != null && StringUtils.isNotBlank(fileBo.getPath())) {
-                    task.setCoverUrl(fileBo.getPath());
-                }
-            }
-            if (detail != null) {
-                task.setDetail(detail.replace("&lt", "<").replace("&gt", ">"));
-            }
+            this.save(task,imageFile,detail);
+            //益起来
             task.setType(1);
+            //状态可用
             task.setStatus(0);
+            taskService.save(task);
+        }catch (RuntimeException e){
+            e.printStackTrace();
+            return Result.failure();
+        }
+        return Result.success();
+    }
+
+    /**
+     * 脑洞虚设-新增
+     * @param task
+     * @param imageFile
+     * @param detail
+     * @return
+     */
+    @RequestMapping(value = "/ndxs/save")
+    @ResponseBody
+    public Result ndxsSave(Task task, @RequestParam(value = "imageFile",required = false) MultipartFile imageFile, String detail){
+        try{
+            this.save(task,imageFile,detail);
+            //脑洞虚设
+            task.setType(2);
+            //个人
+            task.setJoinType(0);
             taskService.save(task);
         }catch (RuntimeException e){
             e.printStackTrace();
@@ -178,8 +192,28 @@ public class TaskController extends GenericEntityController<Task,Task,TaskServic
             }
         } catch (Exception e) {
             e.printStackTrace();
+            return Result.failure();
         }
         return Result.success();
+    }
+
+
+    private void save(Task task,MultipartFile imageFile, String detail){
+        if(imageFile!=null && imageFile.getSize()>0) {
+            FileBo fileBo = null;
+            try {
+                fileBo = FileUtil.save(imageFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (fileBo != null && StringUtils.isNotBlank(fileBo.getPath())) {
+                task.setCoverUrl(fileBo.getPath());
+            }
+        }
+        if (detail != null) {
+            task.setDetail(detail.replace("&lt", "<").replace("&gt", ">"));
+        }
+
     }
 
 

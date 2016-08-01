@@ -4,6 +4,7 @@ import com.leoman.common.service.impl.GenericManagerImpl;
 import com.leoman.task.dao.TaskDao;
 import com.leoman.task.entity.Task;
 import com.leoman.task.service.TaskService;
+import com.leoman.utils.DateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,7 +31,7 @@ public class TaskServiceImpl extends GenericManagerImpl<Task,TaskDao> implements
     private TaskDao dao;
 
     @Override
-    public Page<Task> findPage(final Task task,final Integer taskStatus, int currnetPage, int pagesize) {
+    public Page<Task> findPage(final Task task,final Integer taskStatus,final Integer checkpointStatus, int currnetPage, int pagesize) {
         Specification<Task> spec = new Specification<Task>() {
             @Override
             public Predicate toPredicate(Root<Task> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -49,14 +50,24 @@ public class TaskServiceImpl extends GenericManagerImpl<Task,TaskDao> implements
                 }
 
                 if(taskStatus!=null){
+                    //gt大于
                     if(taskStatus==0){
                         list.add(criteriaBuilder.gt(root.get("startDate").as(Long.class), System.currentTimeMillis()));
                     }
+                    //lt小于
                     if(taskStatus==1){
                         list.add(criteriaBuilder.lt(root.get("endDate").as(Long.class), System.currentTimeMillis()));
                     }
                     if(taskStatus==2){
                         list.add(criteriaBuilder.and(criteriaBuilder.lt(root.get("startDate").as(Long.class), System.currentTimeMillis()),criteriaBuilder.gt(root.get("endDate").as(Long.class), System.currentTimeMillis())));
+                    }
+                }
+                if(checkpointStatus!=null){
+                    if(checkpointStatus==1){
+                        list.add(criteriaBuilder.lt(root.get("createDate").as(Long.class), DateUtils.getTimesmorning()));
+                    }
+                    if(checkpointStatus==2){
+                        list.add(criteriaBuilder.and(criteriaBuilder.gt(root.get("createDate").as(Long.class), DateUtils.getTimesmorning()),criteriaBuilder.lt(root.get("createDate").as(Long.class), DateUtils.getTimesnight())));
                     }
                 }
 

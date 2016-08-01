@@ -1,6 +1,8 @@
 package com.leoman.task.entity;
 
 import com.leoman.common.entity.BaseEntity;
+import com.leoman.utils.DateUtil;
+import com.leoman.utils.DateUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -79,23 +81,49 @@ public class Task extends BaseEntity{
     @Column(name = "status")
     private Integer status;
 
-    //任务状态
+    //关卡
+    @Column(name = "checkpoint")
+    private String checkpoint;
+
+    //yql任务状态
     @Transient
     private String taskStatus;
 
+    //ndxs任务状态
+    @Transient
+    private String checkpointStatus;
+
+
     public String getTaskStatus() {
-        if(this.getStartDate()<System.currentTimeMillis() && this.getEndDate()>System.currentTimeMillis()){
-            return "进行中";
-        }else if(this.getStartDate()>System.currentTimeMillis()){
-            return "待开始";
-        }else if(this.getEndDate()<System.currentTimeMillis()){
-            return "已结束";
+        if(getStartDate()!=null && getEndDate()!=null){
+            if(this.getStartDate()<System.currentTimeMillis() && this.getEndDate()>System.currentTimeMillis()){
+                return "进行中";
+            }else if(this.getStartDate()>System.currentTimeMillis()){
+                return "待开始";
+            }else if(this.getEndDate()<System.currentTimeMillis()){
+                return "已结束";
+            }
         }
-        return "任务时间异常";
+        return "任务时间不存在";
     }
 
     public void setTaskStatus(String taskStatus) {
         this.taskStatus = taskStatus;
+    }
+
+    public String getCheckpointStatus() {
+        if(getCreateDate()!=null){
+            if(getCreateDate()> DateUtils.getTimesmorning() && getCreateDate()< DateUtils.getTimesnight()){
+                return "进行中";
+            }else {
+                return "已结束";
+            }
+        }
+        return "新增时间不存在";
+    }
+
+    public void setCheckpointStatus(String checkpointStatus) {
+        this.checkpointStatus = checkpointStatus;
     }
 
     public Integer getType() {
@@ -224,5 +252,13 @@ public class Task extends BaseEntity{
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getCheckpoint() {
+        return checkpoint;
+    }
+
+    public void setCheckpoint(String checkpoint) {
+        this.checkpoint = checkpoint;
     }
 }

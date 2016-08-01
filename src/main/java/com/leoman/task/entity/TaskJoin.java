@@ -22,11 +22,11 @@ public class TaskJoin extends BaseEntity{
     @Column(name = "join_id")
     private Long joinId;
 
-    //0-进行中，1-已完成，2-未完成
+    //0-未处理，1-通过，2-不通过
     @Column(name = "status")
     private Integer status;
 
-    //是否分配（1-是，0-否）
+    //是否分配（1-已分配, 0-未分配)
     @Column(name = "is_allot")
     private Integer isAllot;
 

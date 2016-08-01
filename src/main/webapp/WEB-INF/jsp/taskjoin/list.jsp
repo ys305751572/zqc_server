@@ -21,13 +21,25 @@
         <!-- 查询条件 -->
         <div class="block-area" id="search">
             <div class="row">
-                <input type="hidden" value="${taskId}" id="taskId">
+                <input type="hidden" value="${task.id}" id="taskId">
                 <input type="hidden" value="${joinType}" id="joinType">
+                <input type="hidden" value="${task.rewardYm}" id="rewardYm">
+                <input type="hidden" value="${task.rewardIntegral}" id="rewardIntegral">
                 <div class="col-md-2 form-group">
-                    <input type="text" class="input-sm form-control" id="mobileName" name="mobileName" placeholder="手机/团队"/>
+                    <c:if test="${joinType eq 0}">
+                        <input type="text" class="input-sm form-control" id="mobile" name="mobile" placeholder="手机"/>
+                    </c:if>
+                    <c:if test="${joinType eq 1}">
+                        <input type="text" class="input-sm form-control" id="teamName" name="teamName" placeholder="团队"/>
+                    </c:if>
                 </div>
                 <div class="col-md-2 form-group">
-                    <input type="text" class="input-sm form-control" id="nickName" name="nickName" placeholder="昵称/群主"/>
+                    <c:if test="${joinType eq 0}">
+                        <input type="text" class="input-sm form-control" id="nickName" name="nickName" placeholder="昵称"/>
+                    </c:if>
+                    <c:if test="${joinType eq 1}">
+                        <input type="text" class="input-sm form-control" id="nickName" name="nickName" placeholder="群主"/>
+                    </c:if>
                 </div>
 
                 <div class="col-md-2 form-group">
@@ -53,12 +65,12 @@
                         </a>
                     </li>
                     <li class="show-on" style="display: none;">
-                        <a href="javascript:void(0)" onclick="$taskJoin.fn.batchDel();" title="一键审核通过" class="tooltips">
+                        <a href="javascript:void(0)" onclick="$taskJoin.fn.batchDel(1);" title="一键审核通过" class="tooltips">
                             <i class="sa-list-delete"></i>
                         </a>
                     </li>
                     <li class="show-on" style="display: none;">
-                        <a href="javascript:void(0)" onclick="$taskJoin.fn.batchDel();" title="一键审核不通过" class="tooltips">
+                        <a href="javascript:void(0)" onclick="$taskJoin.fn.batchDel(2);" title="一键审核不通过" class="tooltips">
                             <i class="sa-list-delete"></i>
                         </a>
                     </li>
@@ -72,8 +84,10 @@
                 <thead>
                 <tr>
                     <th><input type="checkbox" class="pull-left list-parent-check"/></th>
-                    <th>手机/团队</th>
-                    <th>昵称/群主</th>
+                    <c:if test="${joinType eq 0}"><th>手机</th></c:if>
+                    <c:if test="${joinType eq 1}"><th>团队</th></c:if>
+                    <c:if test="${joinType eq 0}"><th>昵称</th></c:if>
+                    <c:if test="${joinType eq 1}"><th>群主</th></c:if>
                     <th>报名时间</th>
                     <th>状态</th>
                     <th>提交时间</th>
@@ -87,7 +101,7 @@
 </section>
 <!-- JS -->
 <%@ include file="../inc/new/foot.jsp" %>
-
+<%@ include file="../inc/new/del.jsp" %>
 <script>
     $taskJoin = {
         v: {
@@ -152,11 +166,9 @@
                             "data": "status",
                             render: function(data){
                                 if(data==0){
-                                    return "进行中";
-                                }else if(data==1){
-                                    return "已完成";
-                                }else if(data==2){
-                                    return "未完成";
+                                    return "未处理";
+                                }else {
+                                    return "已处理";
                                 }
                             },
                             "sDefaultContent" : ""
@@ -171,40 +183,64 @@
                         {
                             "data": "id",
                             "render": function (data,type,full) {
-                                var Approve = "<button title='审核通过' class='btn btn-primary btn-circle detail' onclick='$taskJoin.fn.check("+ data +")'> " +
-                                        "<i class='fa fa-check'></i></button>";
-                                var dontApprove = "<button title='审核不通过' class='btn btn-primary btn-circle detail' onclick='$taskJoin.fn.ban("+ data +")'> " +
-                                        "<i class='fa fa-ban'></i></button>";
+                                var status = full.status;
+                                var id = full.id;
+                                if(status==0){
+                                    var Approve = "<button title='审核通过' class='btn btn-primary btn-circle detail' onclick=\"$taskJoin.fn.changeStatus(\'" + id + "\',\'" + 1 + "\')\"> " +
+                                            "<i class='fa fa-check'></i></button>";
+                                    var dontApprove = "<button title='审核不通过' class='btn btn-primary btn-circle detail' onclick=\"$taskJoin.fn.changeStatus(\'" + id + "\',\'" + 2 + "\')\"> " +
+                                            "<i class='fa fa-ban'></i></button>";
+                                    return Approve +"&nbsp;"+ dontApprove ;
+                                }
+                                if(status==1){
+                                    var rewardYm = $("#rewardYm").val();
+                                    var rewardIntegral = $("#rewardIntegral").val();
+                                    return "审核通过，获得"+rewardIntegral+"积分和"+rewardYm+"益米奖励";
+                                }
+                                if(status==2){
+                                    return "审核不通过，无奖励";
+                                }
 
-                                return Approve +"&nbsp;"+ dontApprove ;
+
                             }
                         }
                     ],
                     "fnServerParams": function (aoData) {
                         aoData.joinType = $("#joinType").val();
                         aoData.taskId = $("#taskId").val();
-                        aoData.mobileName = $("#mobileName").val();
+                        aoData.mobile = $("#mobile").val();
+                        aoData.teamName = $("#teamName").val();
                         aoData.nickName = $("#nickName").val();
                         aoData.status = $("#status").val();
                     }
                 });
             },
-            "changeStatus": function (id,st) {
-                var tempStatus = 0;
-                if(st==0){
-                    $('#showText').html('您确定要禁用该任务吗？');
-                    tempStatus = 1;
-                }else if(st==1){
-                    $('#showText').html('您确定要解禁该任务吗？');
+            "changeStatus": function (id,status) {
+                var rewardYm = $("#rewardYm").val();
+                var rewardIntegral = $("#rewardIntegral").val();
+                var joinType = $("#joinType").val();
+                var name = "";
+                if(joinType==0){
+                    name = "用户";
+                }else if(joinType==1){
+                    name = "团队";
+                }
+                if(status==1){
+                    $('#showText').html('审核通过该'+name+'将获得'+rewardIntegral+'积分和'+rewardYm+'个益米奖励，确认审核通过？');
+                }else if(status==2){
+                    $('#showText').html('审核不通过该'+name+'将无法获得积分和益米奖励，确认审核不通过？');
                 }
                 $("#delete").modal("show");
                 $("#confirm").off("click");
                 $("#confirm").on("click",function(){
                     $.ajax({
-                        "url": "${contextPath}/admin/task/status",
+                        "url": "${contextPath}/admin/taskJoin/status",
                         "data": {
                             "id": id,
-                            "status":tempStatus
+                            "status":status,
+                            "rewardYm":rewardYm,
+                            "rewardIntegral":rewardIntegral,
+                            "joinType":joinType
                         },
                         "dataType": "json",
                         "type": "POST",
@@ -219,18 +255,36 @@
                     });
                 })
             },
-            batchDel : function() {
+            batchDel : function(status) {
                 var checkBox = $("#dataTables tbody tr").find('input[type=checkbox]:checked');
                 var ids = checkBox.getInputId();
-                $('#showText').html('您确定要彻底删除这些活动吗？');
+                var rewardYm = $("#rewardYm").val();
+                var rewardIntegral = $("#rewardIntegral").val();
+                var joinType = $("#joinType").val();
+                var name = "";
+                if(joinType==0){
+                    name = "用户";
+                }else if(joinType==1){
+                    name = "团队";
+                }
+                if(status==1){
+                    $('#showText').html('审核通过该'+name+'将获得'+rewardIntegral+'积分和'+rewardYm+'个益米奖励，确认审核通过？');
+                }else if(status==2){
+                    $('#showText').html('审核不通过该'+name+'将无法获得积分和益米奖励，确认审核不通过？');
+                }
+
                 $("#delete").modal("show");
                 $("#confirm").off("click");
                 if (ids.length > 0){
                     $("#confirm").on("click",function(){
                         $.ajax({
-                            "url": "${contextPath}/admin/task/batchDel",
+                            "url": "${contextPath}/admin/taskJoin/batchDel",
                             "data": {
-                                ids:JSON.stringify(ids)
+                                ids:JSON.stringify(ids),
+                                "status":status,
+                                "rewardYm":rewardYm,
+                                "rewardIntegral":rewardIntegral,
+                                "joinType":joinType
                             },
                             "dataType": "json",
                             "type": "POST",
@@ -246,17 +300,6 @@
                     })
                 }
             },
-            detail: function(id){
-                var type = $("#type").val();
-                window.location.href = "${contextPath}/admin/task/detail?id=" + id+"&type="+type;
-            },
-            add: function(){
-                var type = $("#type").val();
-                window.location.href = "${contextPath}/admin/task/add?type="+type;
-            },
-            taskJoin: function(id,joinType){
-                window.location.href = "${contextPath}/admin/taskJoin/index?taskId="+id+"&joinType="+joinType;
-            },
             responseComplete: function (result, action) {
                 if (result.status) {
                     if (action) {
@@ -270,7 +313,7 @@
                 }
             }
         }
-    }
+    };
     $(function () {
         $taskJoin.fn.init();
 

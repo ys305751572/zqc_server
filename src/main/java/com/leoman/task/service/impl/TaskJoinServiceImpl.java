@@ -19,6 +19,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -29,9 +30,11 @@ public class TaskJoinServiceImpl extends GenericManagerImpl<TaskJoin,TaskJoinDao
 
     @Autowired
     private TaskJoinDao dao;
+    @Autowired
+    private TaskDao taskDao;
 
     @Override
-    public Page<TaskJoin> findPage(final String mobileName,final String nickName,final TaskJoin taskJoin, int currnetPage, int pagesize) {
+    public Page<TaskJoin> findPage(final String mobile,final String teamName,final String nickName,final TaskJoin taskJoin, int currnetPage, int pagesize) {
         Specification<TaskJoin> spec = new Specification<TaskJoin>() {
 
             @Override
@@ -41,27 +44,45 @@ public class TaskJoinServiceImpl extends GenericManagerImpl<TaskJoin,TaskJoinDao
                 if(taskJoin.getTaskId()!=null){
                     list.add(criteriaBuilder.equal(root.get("taskId").as(Integer.class), taskJoin.getTaskId()));
                 }
-
-                if(StringUtils.isNotBlank(mobileName)){
-                    p = criteriaBuilder.like(root.get("userinfo").get("mobile").as(String.class), "%"+mobileName+"%");
-                    p = criteriaBuilder.or(p,criteriaBuilder.like(root.get("team").get("name").as(String.class), "%"+mobileName+"%"));
-                    list.add(p);
-//                    list.add(criteriaBuilder.or(criteriaBuilder.like(root.get("userinfo").get("mobile").as(String.class), "%"+mobileName+"%"),criteriaBuilder.like(root.get("team").get("name").as(String.class), "%"+mobileName+"%")));
+                if(StringUtils.isNotBlank(mobile)){
+                    List<Long> ids = dao.mobile("%"+mobile+"%");
+                    this.in(ids,criteriaBuilder,root,list);
                 }
-
+                if(StringUtils.isNotBlank(teamName)){
+                    List<Long> ids = dao.teamName("%"+teamName+"%");
+                    this.in(ids,criteriaBuilder,root,list);
+                }
+                Task task = taskDao.findById(taskJoin.getTaskId());
                 if(StringUtils.isNotBlank(nickName)){
-                    p = criteriaBuilder.like(root.get("userinfo").get("nickname").as(String.class), "%"+mobileName+"%");
-                    p = criteriaBuilder.or(p,criteriaBuilder.like(root.get("team").get("userinfo").get("nickname").as(String.class), "%"+mobileName+"%"));
-                    list.add(p);
+                    if(task.getJoinType()==0){
+                        List<Long> ids = dao.nickName("%"+nickName+"%");
+                        this.in(ids,criteriaBuilder,root,list);
+                    }else {
+                        List<Long> ids = dao.teamNickName("%"+nickName+"%");
+                        this.in(ids,criteriaBuilder,root,list);
+                    }
                 }
-
                 if(taskJoin.getStatus()!=null){
                     list.add(criteriaBuilder.equal(root.get("status").as(Integer.class), taskJoin.getStatus()));
                 }
 
                 return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
             }
+
+            private void in(List<Long> ids, CriteriaBuilder criteriaBuilder, Root<TaskJoin> root, List<Predicate> list) {
+                if(ids.size()>0 && !ids.isEmpty()) {
+                    Iterator iterator = ids.iterator();
+                    CriteriaBuilder.In in = criteriaBuilder.in(root.get("joinId"));
+                    while (iterator.hasNext()) {
+                        in.value(iterator.next());
+                    }
+                    list.add(in);
+                }else {
+                    list.add(criteriaBuilder.equal(root.get("joinId").as(Long.class), 0));
+                }
+            }
         };
         return dao.findAll(spec, new PageRequest(currnetPage - 1, pagesize, Sort.Direction.DESC,"id"));
     }
+
 }

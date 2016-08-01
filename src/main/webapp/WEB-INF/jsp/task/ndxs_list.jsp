@@ -21,21 +21,13 @@
         <!-- 查询条件 -->
         <div class="block-area" id="search">
             <div class="row">
-                <input type="hidden" value="1" id="type">
+                <input type="hidden" value="2" id="type">
                 <div class="col-md-2 form-group">
-                    <input type="text" class="input-sm form-control" id="name" name="name" placeholder="活动名称"/>
+                    <input type="text" class="input-sm form-control" id="name" name="name" placeholder="关卡名称"/>
                 </div>
                 <div class="col-md-2 form-group">
-                    <select id="joinType" name="joinType" class="select">
-                        <option value="">活动类型</option>
-                        <option value="0">个人</option>
-                        <option value="1">团体</option>
-                    </select>
-                </div>
-                <div class="col-md-2 form-group">
-                    <select id="taskStatus" name="taskStatus" class="select">
+                    <select id="checkpointStatus" name="checkpointStatus" class="select">
                         <option value="">任务状态</option>
-                        <option value="0">待开始</option>
                         <option value="1">已结束</option>
                         <option value="2">进行中</option>
                     </select>
@@ -74,9 +66,9 @@
                 <thead>
                 <tr>
                     <th><input type="checkbox" class="pull-left list-parent-check"/></th>
-                    <th>活动名称</th>
+                    <th>关卡名称</th>
                     <th>新增时间</th>
-                    <th>任务类型</th>
+                    <th>关卡</th>
                     <th>任务状态</th>
                     <th>积分/益米</th>
                     <th>状态</th>
@@ -139,18 +131,8 @@
                             },
                             "sDefaultContent" : ""
                         },
-                        {
-                            "data": "joinType",
-                            render: function(data){
-                                if(data==0){
-                                    return "个人";
-                                }else{
-                                    return "团队";
-                                }
-                            },
-                            "sDefaultContent" : ""
-                        },
-                        {"data": "taskStatus","sDefaultContent" : ""},
+                        {"data": "checkpoint", "sDefaultContent" : ""},
+                        {"data": "checkpointStatus","sDefaultContent" : ""},
                         {
                             "data": "",
                             render: function (data,type,full) {
@@ -163,7 +145,7 @@
                             "data": "status",
                             render: function (data,type,full) {
                                 if(data==0){
-                                    return "——"
+                                    return "—"
                                 }else{
                                     return "不可用"
                                 }
@@ -192,8 +174,7 @@
                     ],
                     "fnServerParams": function (aoData) {
                         aoData.name = $("#name").val();
-                        aoData.joinType = $("#joinType").val();
-                        aoData.taskStatus = $("#taskStatus").val();
+                        aoData.checkpointStatus = $("#checkpointStatus").val();
                         aoData.type = $("#type").val();
                     }
                 });
@@ -231,7 +212,7 @@
             batchDel : function() {
                 var checkBox = $("#dataTables tbody tr").find('input[type=checkbox]:checked');
                 var ids = checkBox.getInputId();
-                $('#showText').html('您确定要彻底删除这些活动吗？');
+                $('#showText').html('您确定要彻底删除这些关卡吗？');
                 $("#delete").modal("show");
                 $("#confirm").off("click");
                 if (ids.length > 0){

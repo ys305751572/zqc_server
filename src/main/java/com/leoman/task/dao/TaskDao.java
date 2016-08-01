@@ -13,4 +13,6 @@ import java.util.List;
  */
 public interface TaskDao extends IBaseJpaRepository<Task>{
 
+    public Task findById(Long id);
+
 }

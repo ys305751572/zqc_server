@@ -71,7 +71,7 @@
                 <span class="menu-item">商城管理</span>
             </a>
             <ul class="list-unstyled menu-item">
-                <li><a href="${contextPath}/admin/admin/index">商品列表</a></li>
+                <li><a href="${contextPath}/admin/product/index">商品列表</a></li>
                 <li><a href="${contextPath}/admin/admin/index">兑换列表列表</a></li>
             </ul>
         </li>
