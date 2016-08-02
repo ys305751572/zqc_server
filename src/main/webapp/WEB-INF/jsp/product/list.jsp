@@ -52,7 +52,7 @@
                         </a>
                     </li>
                     <li class="show-on" style="display: none;">
-                        <a href="javascript:void(0)" onclick="$product.fn.batchDel();" title="删除" class="tooltips">
+                        <a href="javascript:void(0)" onclick="$product.fn.del();" title="删除" class="tooltips">
                             <i class="sa-list-delete"></i>
                         </a>
                     </li>
@@ -162,10 +162,10 @@
                                 var type = full.type;
                                 var detail = "<button title='查看' class='btn btn-primary btn-circle detail' onclick=\"$product.fn.detail(\'" + data + "\')\">" +
                                         "<i class='fa fa-eye'></i></button>";
-                                var edit = "<button title='编辑' class='btn btn-primary btn-circle detail' onclick='$product.fn.edit("+ data +")'> " +
-                                        "<i class='fa fa-eye'></i></button>";
+                                var edit = "<button title='编辑' class='btn btn-primary btn-circle detail' onclick='$product.fn.add("+ data +")'> " +
+                                        "<i class='fa fa-pencil-square-o'></i></button>";
                                 var del = "<button title='删除' class='btn btn-primary btn-circle detail' onclick=\"$product.fn.del(\'" + data + "\')\">" +
-                                        "<i class='fa fa-eye'></i></button>";
+                                        "<i class='fa fa-trash'></i></button>";
                                 return detail +"&nbsp;"+ edit +"&nbsp;"+ del;
                             }
                         }
@@ -177,7 +177,14 @@
                 });
             },
             "del": function (id) {
-                $('#showText').html('您确定要彻底删除该商品吗？');
+                if(id!=null){
+                    $('#showText').html('您确定要彻底删除该商品吗？');
+                }else{
+                    $('#showText').html('您确定要彻底删除这些商品吗？');
+                }
+                var checkBox = $("#dataTables tbody tr").find('input[type=checkbox]:checked');
+                var ids = checkBox.getInputId();
+                console.log(ids);
                 $("#delete").modal("show");
                 $("#confirm").off("click");
                 $("#confirm").on("click",function(){
@@ -185,7 +192,7 @@
                         "url": "${contextPath}/admin/product/del",
                         "data": {
                             "id": id,
-                            "status":tempStatus
+                            ids:JSON.stringify(ids)
                         },
                         "dataType": "json",
                         "type": "POST",
@@ -200,38 +207,15 @@
                     });
                 })
             },
-            batchDel : function() {
-                var checkBox = $("#dataTables tbody tr").find('input[type=checkbox]:checked');
-                var ids = checkBox.getInputId();
-                $('#showText').html('您确定要彻底删除这些活动吗？');
-                $("#delete").modal("show");
-                $("#confirm").off("click");
-                if (ids.length > 0){
-                    $("#confirm").on("click",function(){
-                        $.ajax({
-                            "url": "${contextPath}/admin/product/batchDel",
-                            "data": {
-                                ids:JSON.stringify(ids)
-                            },
-                            "dataType": "json",
-                            "type": "POST",
-                            success: function (result) {
-                                if (result.status) {
-                                    $("#delete").modal("hide");
-                                    $product.v.dTable.ajax.reload(null,false);
-                                } else {
-                                    $common.fn.notify("操作失败", "error");
-                                }
-                            }
-                        });
-                    })
-                }
-            },
             detail: function(id){
                 window.location.href = "${contextPath}/admin/product/detail?id="+id;
             },
-            add: function(){
-                window.location.href = "${contextPath}/admin/product/add";
+            add: function(id){
+                if(id!=null){
+                    window.location.href = "${contextPath}/admin/product/add?id="+id;
+                }else{
+                    window.location.href = "${contextPath}/admin/product/add";
+                }
             },
             responseComplete: function (result, action) {
                 if (result.status) {

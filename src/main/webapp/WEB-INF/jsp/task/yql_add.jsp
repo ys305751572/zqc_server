@@ -130,8 +130,19 @@
         fn: {
             init: function () {
                 $user.fn.initImage();
-                $("#eDate").off("change");
-                $("#eDate").on("change",function(){
+                if($("#sDate").val()==""){
+                    $("#eDate").attr("disabled",true);
+                }
+
+                $("#sDate").change(function(){
+                    if($("#sDate").val()!=""){
+                        $("#eDate").attr("disabled",false);
+                    }else{
+                        $("#eDate").attr("disabled",true);
+                    }
+                });
+
+                $("#eDate").change(function(){
                     if($("#eDate").val()<$("#sDate").val()){
                         $leoman.notify('结束日期不能小于开始日期', "error");
                         $("#eDate").val("");

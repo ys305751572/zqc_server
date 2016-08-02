@@ -57,15 +57,17 @@
                     </div>
 
                     <div class="col-md-6 m-b-15" >
-                        <div><label>所需益米:</label></div>
                         <c:if test="${product.type eq 0}">
+                            <div><label>所需益米:</label></div>
                             <input type="text" id="ym" name="ym" value="${product.ym}" class="input-sm form-control validate[required]" placeholder="..." disabled>
                         </c:if>
                         <c:if test="${product.type eq 1}">
-                            <input type="text" id="ym" name="ym" value="${ym}" class="input-sm form-control validate[required]" placeholder="..." disabled>
+                            <div><label>所需人数:</label></div>
+                            <input type="text" id="nums" name="nums" value="${product.nums}" class="input-sm form-control validate[required]" placeholder="..." disabled>
                         </c:if>
                         <c:if test="${product.type eq 2}">
-                            <c:forEach items="${ProductAdsList}" var="v">
+                            <div><label>所需益米:</label></div>
+                            <c:forEach items="${productAdsList}" var="v">
                                 <input type="text" id="day" name="day" value="${v.days}天&nbsp;&nbsp;:&nbsp;&nbsp;${v.ym}" class="input-sm form-control validate[required]" style="width: 100px;float:left;margin-right: 10px;" placeholder="..." disabled>
                             </c:forEach>
                         </c:if>

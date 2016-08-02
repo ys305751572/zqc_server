@@ -144,6 +144,8 @@ public class TaskController extends GenericEntityController<Task,Task,TaskServic
             this.save(task,imageFile,detail);
             //脑洞虚设
             task.setType(2);
+            //所需人数
+            task.setNums(0);
             //个人
             task.setJoinType(0);
             taskService.save(task);
@@ -179,16 +181,19 @@ public class TaskController extends GenericEntityController<Task,Task,TaskServic
      * @param ids
      * @return
      */
-    @RequestMapping(value = "/batchDel", method = RequestMethod.POST)
+    @RequestMapping(value = "/del", method = RequestMethod.POST)
     @ResponseBody
-    public Result batchDel(String ids) {
-        if (StringUtils.isBlank(ids)){
+    public Result del(Long id,String ids) {
+        if (id==null && StringUtils.isBlank(ids)){
             return Result.failure();
         }
         try {
-            Long[] ss = JsonUtil.json2Obj(ids,Long[].class);
-            for (Long id : ss) {
+            if(id!=null){
                 taskService.delete(taskService.queryByPK(id));
+            }
+            Long[] ss = JsonUtil.json2Obj(ids,Long[].class);
+            for (Long _id : ss) {
+                taskService.delete(taskService.queryByPK(_id));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -213,6 +218,8 @@ public class TaskController extends GenericEntityController<Task,Task,TaskServic
         if (detail != null) {
             task.setDetail(detail.replace("&lt", "<").replace("&gt", ">"));
         }
+        //已报名人数
+        task.setJoinNum(0);
 
     }
 

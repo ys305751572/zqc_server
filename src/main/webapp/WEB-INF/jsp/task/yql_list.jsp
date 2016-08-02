@@ -60,7 +60,7 @@
                         </a>
                     </li>
                     <li class="show-on" style="display: none;">
-                        <a href="javascript:void(0)" onclick="$task.fn.batchDel();" title="删除" class="tooltips">
+                        <a href="javascript:void(0)" onclick="$task.fn.del();" title="删除" class="tooltips">
                             <i class="sa-list-delete"></i>
                         </a>
                     </li>
@@ -175,18 +175,12 @@
                                 var detail = "<button title='查看' class='btn btn-primary btn-circle detail' onclick='$task.fn.detail("+ data +")'> " +
                                         "<i class='fa fa-eye'></i></button>";
                                 var id = full.id;
-                                var st = full.status;
                                 var joinType = full.joinType;
-                                if(st==0){
-                                    var status = "<button title='禁用' class='btn btn-primary btn-circle detail' onclick=\"$task.fn.changeStatus(\'" + id + "\',\'" + st + "\')\"> " +
-                                            "<i class='fa fa fa-ban'></i></button>";
-                                }else if(st==1){
-                                    var status = "<button title='解禁' class='btn btn-primary btn-circle detail' onclick=\"$task.fn.changeStatus(\'" + id + "\',\'" + st + "\')\">" +
-                                            "<i class='fa fa-check'></i></button>";
-                                }
+                                var del = "<button title='删除' class='btn btn-primary btn-circle detail' onclick=\"$task.fn.del(\'" + data + "\')\">" +
+                                        "<i class='fa fa-trash'></i></button>";
                                 var taskJoin = "<button title='报名' class='btn btn-primary btn-circle detail' onclick=\"$task.fn.taskJoin(\'" + id + "\',\'" + joinType + "\')\">" +
                                         "<i class='fa fa-eye'></i></button>";
-                                return detail +"&nbsp;"+ status +"&nbsp;"+ taskJoin;
+                                return detail +"&nbsp;"+ del +"&nbsp;"+ taskJoin;
                             }
                         }
                     ],
@@ -228,7 +222,7 @@
                     });
                 })
             },
-            batchDel : function() {
+            del : function() {
                 var checkBox = $("#dataTables tbody tr").find('input[type=checkbox]:checked');
                 var ids = checkBox.getInputId();
                 $('#showText').html('您确定要彻底删除这些活动吗？');
@@ -237,7 +231,7 @@
                 if (ids.length > 0){
                     $("#confirm").on("click",function(){
                         $.ajax({
-                            "url": "${contextPath}/admin/task/batchDel",
+                            "url": "${contextPath}/admin/task/del",
                             "data": {
                                 ids:JSON.stringify(ids)
                             },

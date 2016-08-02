@@ -54,6 +54,20 @@ public class Product extends BaseEntity{
     //众筹状态
     @Transient
     private String raiseStatus;
+    //众筹益米
+    @Transient
+    private Integer zcym;
+
+    public Integer getZcym() {
+        if(getType()==1){
+            return getYm()*getNums();
+        }
+        return 0;
+    }
+
+    public void setZcym(Integer zcym) {
+        this.zcym = zcym;
+    }
 
     public String getRaiseStatus() {
         if(getType()==1){

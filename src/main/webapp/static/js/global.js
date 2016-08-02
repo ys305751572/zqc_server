@@ -322,7 +322,7 @@ $(document).on('click', '.notifyjs-foo-base .yes', function () {
             }
         } else {
             if (checkIds.length == 0) {
-                $leoman.notify('请选择至少一条记录操作！', 'error');
+                //$leoman.notify('请选择至少一条记录操作！', 'error');
                 return false;
             } else {
                 return checkIds;

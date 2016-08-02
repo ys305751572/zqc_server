@@ -81,14 +81,7 @@
         },
         fn: {
             init: function () {
-                $user.fn.initImage();
-                $("#eDate").off("change");
-                $("#eDate").on("change",function(){
-                    if($("#eDate").val()<$("#sDate").val()){
-                        $leoman.notify('结束日期不能小于开始日期', "error");
-                        $("#eDate").val("");
-                    }
-                });
+
             },
             save: function () {
                 var isCheck = true;
@@ -126,20 +119,8 @@
                         }
                     });
                 }
-            },
-            initImage : function() {
-                $('#file-fr').fileinput({
-                    language: 'zh',
-                    uploadAsync: false,
-                    showUpload: false, // hide upload button
-                    showRemove: false, // hide remove button
-                    uploadUrl: '#',
-                    minFileCount: 1,
-                    maxFileCount: 3,
-                    msgFilesTooMany:"只能上传三张图片",
-                    allowedFileExtensions : ['jpg', 'png'],
-                });
             }
+
         }
     }
     $(function () {
