@@ -80,11 +80,9 @@ public class TaskController extends GenericEntityController<Task,Task,TaskServic
         model.addAttribute("task",task);
         if(type==1){
             return "task/yql_detail";
-        }
-        if(type==2){
+        }else{
             return "task/ndxs_detail";
         }
-        return null;
     }
 
     /**
@@ -96,11 +94,9 @@ public class TaskController extends GenericEntityController<Task,Task,TaskServic
     public String add(Integer type){
         if(type==1){
             return "task/yql_add";
-        }
-        if(type==2){
+        }else {
             return "task/ndxs_add";
         }
-        return null;
     }
 
     /**

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * 任务-报名表
  * Created by Administrator on 2016/7/29.
  */
 @Controller
@@ -50,6 +50,13 @@ public class TaskJoinController extends GenericEntityController<TaskJoin,TaskJoi
     @Autowired
     private YmRecordService ymRecordService;
 
+    /**
+     * 页面
+     * @param taskId
+     * @param joinType
+     * @param model
+     * @return
+     */
     @RequestMapping(value = "/index")
     public String index(Long taskId, Integer joinType, Model model){
         Task task = taskService.queryByPK(taskId);
@@ -58,6 +65,18 @@ public class TaskJoinController extends GenericEntityController<TaskJoin,TaskJoi
         return "taskjoin/list";
     }
 
+    /**
+     * 列表
+     * @param taskJoin
+     * @param start
+     * @param length
+     * @param draw
+     * @param joinType
+     * @param mobile
+     * @param teamName
+     * @param nickName
+     * @return
+     */
     @RequestMapping(value = "/list")
     @ResponseBody
     public Map<String, Object> list(TaskJoin taskJoin, Integer start, Integer length, Integer draw, Integer joinType,String mobile,String teamName,String nickName) {
