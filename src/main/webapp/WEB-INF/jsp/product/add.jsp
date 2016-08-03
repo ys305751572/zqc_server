@@ -64,7 +64,7 @@
                             <div class="col-md-6 m-b-15">
                                 <label>所需益米:</label>
                                 <input type="text" id="ym" name="ym" value="${product.ym}"
-                                       class="input-sm form-control validate[required]" placeholder="...">
+                                       class="input-sm form-control validate[required]" placeholder="..." onkeyup="value=value.replace(/[^0-9]/g,'')">
                             </div>
                             <div class="col-md-3 m-b-15">
                                 <label>兑换有效期开始时间：</label>
@@ -87,12 +87,12 @@
                             <div class="col-md-6 m-b-15">
                                     <label>所需人数:</label>
                                     <input type="text" id="nums" name="nums" value="${product.nums}"
-                                           class="input-sm form-control validate[required]" placeholder="...">
+                                           class="input-sm form-control validate[required]" placeholder="..." onkeyup="value=value.replace(/[^0-9]/g,'')">
                             </div>
                             <div class="col-md-6 m-b-15" id="a">
                                     <label>单个售价:</label>
                                     <input type="text" id="dgym" name="ym" value="${product.ym}"
-                                           class="input-sm form-control validate[required]" placeholder="...">
+                                           class="input-sm form-control validate[required]" placeholder="..." onkeyup="value=value.replace(/[^0-9]/g,'')">
                             </div>
                         </c:if>
                         <c:if test="${product.type eq 2}">
@@ -101,12 +101,12 @@
                                     <div>
                                         <label>展示周期:</label>
                                         <input type="text" id="days" name="days" value="${v.days}"
-                                               class="input-sm form-control validate[required]" placeholder="...">
+                                               class="input-sm form-control validate[required]" placeholder="..." onkeyup="value=value.replace(/[^0-9]/g,'')">
                                     </div>
                                     <div>
                                         <label>所需益米:</label>
                                         <input type="text" id="adsYm" name="adsYm" value="${v.ym}"
-                                               class="input-sm form-control validate[required]" placeholder="...">
+                                               class="input-sm form-control validate[required]" placeholder="..." onkeyup="value=value.replace(/[^0-9]/g,'')">
                                     </div>
                                 </div>
                             </c:forEach>
@@ -223,11 +223,11 @@
                 html += "     <div class='col-md-1 m-b-15' name='index'>                                                                   ";
                 html += "         <div>                                                                                                    ";
                 html += "             <label>展示周期:</label>                                                                              ";
-                html += "             <input type='text' id='days' name='days' value='' class='input-sm form-control validate[required]' > ";
+                html += "             <input type='text' id='days' name='days' value='' class='input-sm form-control validate[required]' onkeyup='value=value.replace(/[^0-9]/g,\"\")'> ";
                 html += "         </div>                                                                                                   ";
                 html += "         <div>                                                                                                    ";
                 html += "             <label>所需益米:</label>                                                                              ";
-                html += "             <input type='text' id='adsYm' name='adsYm' value='' class='input-sm form-control validate[required]' >   ";
+                html += "             <input type='text' id='adsYm' name='adsYm' value='' class='input-sm form-control validate[required]' onkeyup='value=value.replace(/[^0-9]/g,\"\")'>   ";
                 html += "         </div>                                                                                                   ";
                 html += "     </div>                                                                                                       ";
                 $("#change").append(html);
@@ -247,7 +247,7 @@
                 if(data==0){
                     html += " <div class='col-md-6 m-b-15'>																								";
                     html += "     <label>所需益米:</label>                                                                                              ";
-                    html += "     <input type='text' id='ym' name='ym' value='' class='input-sm form-control validate[required]' placeholder='...'>     ";
+                    html += "     <input type='text' id='ym' name='ym' value='' class='input-sm form-control validate[required]' placeholder='...' onkeyup='value=value.replace(/[^0-9]/g,\"\")'>     ";
                     html += " </div>                                                                                                                    ";
                     html += " <div class='col-md-3 m-b-15'>                                                                                             ";
                     html += "     <label>兑换有效期开始时间：</label>                                                                                   ";
@@ -269,11 +269,11 @@
                 if(data==1){
                     html += "<div class='col-md-6 m-b-15'>																								 ";
                     html += "        <label>所需人数:</label>                                                                                            ";
-                    html += "        <input type='text' id='nums' name='ym' value='' class='input-sm form-control validate[required]' placeholder='...'> ";
+                    html += "        <input type='text' id='nums' name='nums' value='' class='input-sm form-control validate[required]' placeholder='...' onkeyup='value=value.replace(/[^0-9]/g,\"\")'> ";
                     html += "</div>                                                                                                                      ";
                     html += "<div class='col-md-6 m-b-15' id='a'>                                                                                        ";
                     html += "        <label>单个售价:</label>                                                                                            ";
-                    html += "        <input type='text' id='dgym' name='ym' value='' class='input-sm form-control validate[required]' placeholder='...'> ";
+                    html += "        <input type='text' id='dgym' name='ym' value='' class='input-sm form-control validate[required]' placeholder='...' onkeyup='value=value.replace(/[^0-9]/g,\"\")'> ";
                     html += "</div>                                                                                                                      ";
                 }
                 //广告
@@ -282,11 +282,11 @@
                     html += "     <div class='col-md-1 m-b-15' name='index'>                                                                    ";
                     html += "         <div>                                                                                                     ";
                     html += "             <label>展示周期:</label>                                                                              ";
-                    html += "             <input type='text' id='days' name='days' value='' class='input-sm form-control validate[required]'>    ";
+                    html += "             <input type='text' id='days' name='days' value='' class='input-sm form-control validate[required]' onkeyup='value=value.replace(/[^0-9]/g,\"\")'>    ";
                     html += "         </div>                                                                                                     ";
                     html += "         <div>                                                                                                      ";
                     html += "             <label>所需益米:</label>                                                                               ";
-                    html += "             <input type='text' id='adsYm' name='adsYm' value='' class='input-sm form-control validate[required]' >   ";
+                    html += "             <input type='text' id='adsYm' name='adsYm' value='' class='input-sm form-control validate[required]' onkeyup='value=value.replace(/[^0-9]/g,\"\")'>   ";
                     html += "         </div>                                                                                                     ";
                     html += "     </div>                                                                                                        ";
                     but += " <div class='col-md-12 m-b-15'  >                                                                                    ";

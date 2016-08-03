@@ -79,7 +79,6 @@
                     <th>任务类型</th>
                     <th>任务状态</th>
                     <th>积分/益米</th>
-                    <th>状态</th>
                     <th>操作</th>
                 </tr>
                 </thead>
@@ -160,16 +159,6 @@
                             },
                             "sDefaultContent" : ""},
                         {
-                            "data": "status",
-                            render: function (data,type,full) {
-                                if(data==0){
-                                    return "——"
-                                }else{
-                                    return "不可用"
-                                }
-                            },
-                            "sDefaultContent" : ""},
-                        {
                             "data": "id",
                             "render": function (data,type,full) {
                                 var detail = "<button title='查看' class='btn btn-primary btn-circle detail' onclick='$task.fn.detail("+ data +")'> " +
@@ -192,22 +181,18 @@
                     }
                 });
             },
-            "changeStatus": function (id,st) {
-                var tempStatus = 0;
-                if(st==0){
-                    $('#showText').html('您确定要禁用该任务吗？');
-                    tempStatus = 1;
-                }else if(st==1){
-                    $('#showText').html('您确定要解禁该任务吗？');
-                }
+            del : function(id) {
+                var checkBox = $("#dataTables tbody tr").find('input[type=checkbox]:checked');
+                var ids = checkBox.getInputId();
+                $('#showText').html('您确定要彻底删除所选择活动吗？');
                 $("#delete").modal("show");
                 $("#confirm").off("click");
                 $("#confirm").on("click",function(){
                     $.ajax({
-                        "url": "${contextPath}/admin/task/status",
+                        "url": "${contextPath}/admin/task/del",
                         "data": {
-                            "id": id,
-                            "status":tempStatus
+                            id:id,
+                            ids:JSON.stringify(ids)
                         },
                         "dataType": "json",
                         "type": "POST",
@@ -221,33 +206,6 @@
                         }
                     });
                 })
-            },
-            del : function() {
-                var checkBox = $("#dataTables tbody tr").find('input[type=checkbox]:checked');
-                var ids = checkBox.getInputId();
-                $('#showText').html('您确定要彻底删除这些活动吗？');
-                $("#delete").modal("show");
-                $("#confirm").off("click");
-                if (ids.length > 0){
-                    $("#confirm").on("click",function(){
-                        $.ajax({
-                            "url": "${contextPath}/admin/task/del",
-                            "data": {
-                                ids:JSON.stringify(ids)
-                            },
-                            "dataType": "json",
-                            "type": "POST",
-                            success: function (result) {
-                                if (result.status) {
-                                    $("#delete").modal("hide");
-                                    $task.v.dTable.ajax.reload(null,false);
-                                } else {
-                                    $common.fn.notify("操作失败", "error");
-                                }
-                            }
-                        });
-                    })
-                }
             },
             detail: function(id){
                 var type = $("#type").val();

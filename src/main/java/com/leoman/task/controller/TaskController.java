@@ -2,14 +2,11 @@ package com.leoman.task.controller;
 
 import com.leoman.common.controller.common.GenericEntityController;
 import com.leoman.common.factory.DataTableFactory;
-import com.leoman.common.service.impl.GenericManagerImpl;
 import com.leoman.image.entity.FileBo;
 import com.leoman.task.entity.Task;
 import com.leoman.task.service.TaskService;
 import com.leoman.task.service.impl.TaskServiceImpl;
-import com.leoman.utils.FileUtil;
-import com.leoman.utils.JsonUtil;
-import com.leoman.utils.Result;
+import com.leoman.utils.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -120,8 +117,6 @@ public class TaskController extends GenericEntityController<Task,Task,TaskServic
             this.save(task,imageFile,detail);
             //益起来
             task.setType(1);
-            //状态可用
-            task.setStatus(0);
             taskService.save(task);
         }catch (RuntimeException e){
             e.printStackTrace();
@@ -157,27 +152,7 @@ public class TaskController extends GenericEntityController<Task,Task,TaskServic
     }
 
     /**
-     * 改变状态 是否可用
-     * @param id
-     * @param status
-     * @return
-     */
-    @RequestMapping(value = "/status")
-    @ResponseBody
-    public Result status(Long id, Integer status){
-        Task task = taskService.queryByPK(id);
-        try{
-            task.setStatus(status);
-            taskService.update(task);
-        }catch (RuntimeException e){
-            e.printStackTrace();
-            return Result.failure();
-        }
-        return Result.success();
-    }
-
-    /**
-     * 批量删除
+     * 删除
      * @param ids
      * @return
      */
@@ -190,10 +165,11 @@ public class TaskController extends GenericEntityController<Task,Task,TaskServic
         try {
             if(id!=null){
                 taskService.delete(taskService.queryByPK(id));
-            }
-            Long[] ss = JsonUtil.json2Obj(ids,Long[].class);
-            for (Long _id : ss) {
-                taskService.delete(taskService.queryByPK(_id));
+            }else {
+                Long[] ss = JsonUtil.json2Obj(ids,Long[].class);
+                for (Long _id : ss) {
+                    taskService.delete(taskService.queryByPK(_id));
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

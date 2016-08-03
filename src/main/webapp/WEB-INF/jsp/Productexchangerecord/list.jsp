@@ -22,14 +22,28 @@
         <div class="block-area" id="search">
             <div class="row">
                 <div class="col-md-2 form-group">
-                    <input type="text" class="input-sm form-control" id="name" name="name" placeholder="商品名称"/>
+                    <input type="text" class="input-sm form-control" id="name" name="name" placeholder="手机号/团体名称"/>
                 </div>
                 <div class="col-md-2 form-group">
-                    <select id="type" name="type" class="select">
+                    <input type="text" class="input-sm form-control" id="nickname" name="nickname" placeholder="昵称/群主"/>
+                </div>
+                <div class="col-md-2 form-group">
+                    <input type="text" class="input-sm form-control" id="productName" name="productName" placeholder="商品名称"/>
+                </div>
+                <div class="col-md-2 form-group">
+                    <select id="productType" name="productType" class="select">
                         <option value="">商品类型</option>
                         <option value="0">实物</option>
                         <option value="1">众筹</option>
                         <option value="2">广告位</option>
+                    </select>
+                </div>
+                <div class="col-md-2 form-group">
+                    <select id="status" name="status" class="select">
+                        <option value="">商品类型</option>
+                        <option value="0">待处理</option>
+                        <option value="1">已处理</option>
+                        <option value="2">已过期</option>
                     </select>
                 </div>
             </div>
@@ -42,18 +56,8 @@
             <div class="row">
                 <ul class="list-inline list-mass-actions">
                     <li>
-                        <a data-toggle="modal" onclick="$product.fn.add()" title="新增" class="tooltips">
-                            <i class="sa-list-add"></i>
-                        </a>
-                    </li>
-                    <li>
                         <a href="" title="刷新" class="tooltips">
                             <i class="sa-list-refresh"></i>
-                        </a>
-                    </li>
-                    <li class="show-on" style="display: none;">
-                        <a href="javascript:void(0)" onclick="$product.fn.del();" title="删除" class="tooltips">
-                            <i class="sa-list-delete"></i>
                         </a>
                     </li>
                 </ul>
@@ -66,10 +70,12 @@
                 <thead>
                 <tr>
                     <th><input type="checkbox" class="pull-left list-parent-check"/></th>
-                    <th>商品名称</th>
-                    <th>新增时间</th>
-                    <th>分类</th>
-                    <th>益米</th>
+                    <th>手机/团体名称</th>
+                    <th>昵称</th>
+                    <th>商品</th>
+                    <th>商品类型</th>
+                    <th>兑换积分</th>
+                    <th>兑换时间</th>
                     <th>状态</th>
                     <th>操作</th>
                 </tr>
@@ -103,7 +109,7 @@
                     "serverSide": true,
                     "searching": false,
                     "ajax": {
-                        "url": "${contextPath}/admin/product/list",
+                        "url": "${contextPath}/admin/productExchangeRecord/list",
                         "type": "POST"
                     },
                     "columns": [
@@ -114,15 +120,11 @@
                                 return checkbox;
                             }
                         },
-                        {
-                            "data": "",
-                            render: function (data,type,full) {
-                                var coverUrl = full.coverUrl;
-                                var name = full.name;
-                                return "<img src='"+ coverUrl + "'>"+name;
-                            },
-                            "sDefaultContent" : ""
-                        },
+                        {"data": "name", "sDefaultContent" : ""},
+                        {"data": "nickname","sDefaultContent" : ""},
+                        {"data": "productName","sDefaultContent" : ""},
+                        {"data": "productTypeName","sDefaultContent" : ""},
+                        {"data": "integral","sDefaultContent" : ""},
                         {
                             "data": "createDate",
                             render: function (data) {
@@ -131,80 +133,70 @@
                             "sDefaultContent" : ""
                         },
                         {
-                            "data": "type",
-                            render: function(data){
-                                if(data==0){
-                                    return "实物";
-                                }else if(data==1){
-                                    return "众筹";
-                                }else{
-                                    return "广告位";
-                                }
-                            },
-                            "sDefaultContent" : ""
-                        },
-                        {"data": "ym","sDefaultContent" : ""},
-                        {
-                            "data": "raiseStatus",
-                            render: function (data,type,full) {
-                                var type = full.type;
-                                if(type==1) {
-                                    return data;
+                            "data": "",
+                            render : function( data, type, row, meta) {
+                                if(row.productType==0){
+                                    if(row.status==0){
+                                        return "待处理 <br/>验证码:"+row.code;
+                                    }
+                                    if(row.status==1){
+                                        return "已处理<br/>验证码:"+row.code;
+                                    }
+                                    if(row.status==2){
+                                        return "已过期<br/>验证码:"+row.code;
+                                    }
+
+                                }else if(row.productType==1){
+                                    if(row.status==0){
+                                        return "待处理 <br/>"+row.days+"天";
+                                    }
+                                    if(row.status==1){
+                                        return "已处理<br/>"+row.days+"天";
+                                    }
+                                    if(row.status==2){
+                                        return "已过期<br/>"+row.days+"天";
+                                    }
                                 }else{
                                     return "——";
                                 }
-
                             },
-                            "sDefaultContent" : ""},
+                            "sDefaultContent" : "",
+                            'sClass' :'center'
+                        },
                         {
                             "data": "id",
                             "render": function (data,type,full) {
-                                var type = full.type;
-                                var st = full.wishingWell;
-                                var detail = "<button title='查看' class='btn btn-primary btn-circle detail' onclick=\"$product.fn.detail(\'" + data + "\')\">" +
-                                        "<i class='fa fa-eye'></i></button>";
-                                var edit = "<button title='编辑' class='btn btn-primary btn-circle detail' onclick='$product.fn.add("+ data +")'> " +
-                                        "<i class='fa fa-pencil-square-o'></i></button>";
-                                var del = "<button title='删除' class='btn btn-primary btn-circle detail' onclick=\"$product.fn.del(\'" + data + "\')\">" +
-                                        "<i class='fa fa-trash'></i></button>";
-                                if(st==0){
-                                    var wishingWell = "<button title='推荐' class='btn btn-primary btn-circle detail' onclick=\"$product.fn.wishingWell(\'" + data + "\',\'" + st + "\')\">" +
+                                var type = full.productType;
+                                var st = full.status;
+                                if(st==0 && type!=2){
+                                    var check = "<button title='确认处理' class='btn btn-primary btn-circle detail' onclick=\"$product.fn.check(\'" + data + "\',\'" + st + "\')\">" +
                                             "<i class='fa fa-check'></i></button>";
+                                    return check;
                                 }else{
-                                    var wishingWell = "<button title='取消推荐' class='btn btn-primary btn-circle detail' onclick=\"$product.fn.wishingWell(\'" + data + "\',\'" + st + "\')\">" +
-                                            "<i class='fa fa-ban'></i></button>";
+                                    return null;
                                 }
-                                if(type==1){
-                                    return detail +"&nbsp;"+ edit +"&nbsp;"+ del +"&nbsp;"+wishingWell;
-                                }else{
-                                    return detail +"&nbsp;"+ edit +"&nbsp;"+ del;
-                                }
-
                             }
                         }
                     ],
                     "fnServerParams": function (aoData) {
                         aoData.name = $("#name").val();
-                        aoData.type = $("#type").val();
+                        aoData.nickname = $("#nickname").val();
+                        aoData.productName = $("#productName").val();
+                        aoData.productType = $("#productType").val();
+                        aoData.status = $("#status").val();
                     }
                 });
             },
-            wishingWell:function(id,st){
-                var index = 0;
-                if(st==0){
-                    $('#showText').html('您确定要将该商品推荐到许愿池吗?');
-                    index = 1;
-                }else{
-                    $('#showText').html('您确定要取消推荐吗?');
-                }
+            "check": function (id,st) {
+
+                $('#showText').html('您确定要通过该请求吗？');
                 $("#delete").modal("show");
                 $("#confirm").off("click");
                 $("#confirm").on("click",function(){
                     $.ajax({
-                        "url": "${contextPath}/admin/product/wishingWell",
+                        "url": "${contextPath}/admin/productExchangeRecord/check",
                         "data": {
-                            "id": id,
-                            "status":index
+                            "id": id
                         },
                         "dataType": "json",
                         "type": "POST",
@@ -218,46 +210,6 @@
                         }
                     });
                 })
-            },
-            "del": function (id) {
-                if(id!=null){
-                    $('#showText').html('您确定要彻底删除该商品吗？');
-                }else{
-                    $('#showText').html('您确定要彻底删除这些商品吗？');
-                }
-                var checkBox = $("#dataTables tbody tr").find('input[type=checkbox]:checked');
-                var ids = checkBox.getInputId();
-                $("#delete").modal("show");
-                $("#confirm").off("click");
-                $("#confirm").on("click",function(){
-                    $.ajax({
-                        "url": "${contextPath}/admin/product/del",
-                        "data": {
-                            "id": id,
-                            "ids":JSON.stringify(ids)
-                        },
-                        "dataType": "json",
-                        "type": "POST",
-                        success: function (result) {
-                            if (result.status) {
-                                $("#delete").modal("hide");
-                                $product.v.dTable.ajax.reload(null,false);
-                            } else {
-                                $common.fn.notify("操作失败", "error");
-                            }
-                        }
-                    });
-                })
-            },
-            detail: function(id){
-                window.location.href = "${contextPath}/admin/product/detail?id="+id;
-            },
-            add: function(id){
-                if(id!=null){
-                    window.location.href = "${contextPath}/admin/product/add?id="+id;
-                }else{
-                    window.location.href = "${contextPath}/admin/product/add";
-                }
             },
             responseComplete: function (result, action) {
                 if (result.status) {

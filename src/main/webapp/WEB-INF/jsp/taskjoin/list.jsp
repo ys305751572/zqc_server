@@ -46,8 +46,8 @@
                     <select id="status" name="status" class="select">
                         <option value="">任务状态</option>
                         <option value="0">进行中</option>
-                        <option value="1">已完成</option>
-                        <option value="2">未完成</option>
+                        <option value="1">已通过</option>
+                        <option value="2">未通过</option>
                     </select>
                 </div>
             </div>
@@ -65,13 +65,13 @@
                         </a>
                     </li>
                     <li class="show-on" style="display: none;">
-                        <a href="javascript:void(0)" onclick="$taskJoin.fn.batchDel(1);" title="一键审核通过" class="tooltips">
-                            <i class="sa-list-delete"></i>
+                        <a href="javascript:void(0)" onclick="$taskJoin.fn.audit(null,1);" title="一键审核通过" class="tooltips">
+                            <i class="sa-list-back"></i>
                         </a>
                     </li>
                     <li class="show-on" style="display: none;">
-                        <a href="javascript:void(0)" onclick="$taskJoin.fn.batchDel(2);" title="一键审核不通过" class="tooltips">
-                            <i class="sa-list-delete"></i>
+                        <a href="javascript:void(0)" onclick="$taskJoin.fn.audit(null,2);" title="一键审核不通过" class="tooltips">
+                            <i class="sa-list-back"></i>
                         </a>
                     </li>
                 </ul>
@@ -186,9 +186,9 @@
                                 var status = full.status;
                                 var id = full.id;
                                 if(status==0){
-                                    var Approve = "<button title='审核通过' class='btn btn-primary btn-circle detail' onclick=\"$taskJoin.fn.changeStatus(\'" + id + "\',\'" + 1 + "\')\"> " +
+                                    var Approve = "<button title='审核通过' class='btn btn-primary btn-circle detail' onclick=\"$taskJoin.fn.audit(\'" + id + "\',\'" + 1 + "\')\"> " +
                                             "<i class='fa fa-check'></i></button>";
-                                    var dontApprove = "<button title='审核不通过' class='btn btn-primary btn-circle detail' onclick=\"$taskJoin.fn.changeStatus(\'" + id + "\',\'" + 2 + "\')\"> " +
+                                    var dontApprove = "<button title='审核不通过' class='btn btn-primary btn-circle detail' onclick=\"$taskJoin.fn.audit(\'" + id + "\',\'" + 2 + "\')\"> " +
                                             "<i class='fa fa-ban'></i></button>";
                                     return Approve +"&nbsp;"+ dontApprove ;
                                 }
@@ -215,47 +215,7 @@
                     }
                 });
             },
-            "changeStatus": function (id,status) {
-                var rewardYm = $("#rewardYm").val();
-                var rewardIntegral = $("#rewardIntegral").val();
-                var joinType = $("#joinType").val();
-                var name = "";
-                if(joinType==0){
-                    name = "用户";
-                }else if(joinType==1){
-                    name = "团队";
-                }
-                if(status==1){
-                    $('#showText').html('审核通过该'+name+'将获得'+rewardIntegral+'积分和'+rewardYm+'个益米奖励，确认审核通过？');
-                }else if(status==2){
-                    $('#showText').html('审核不通过该'+name+'将无法获得积分和益米奖励，确认审核不通过？');
-                }
-                $("#delete").modal("show");
-                $("#confirm").off("click");
-                $("#confirm").on("click",function(){
-                    $.ajax({
-                        "url": "${contextPath}/admin/taskJoin/status",
-                        "data": {
-                            "id": id,
-                            "status":status,
-                            "rewardYm":rewardYm,
-                            "rewardIntegral":rewardIntegral,
-                            "joinType":joinType
-                        },
-                        "dataType": "json",
-                        "type": "POST",
-                        success: function (result) {
-                            if (result.status) {
-                                $("#delete").modal("hide");
-                                $taskJoin.v.dTable.ajax.reload(null,false);
-                            } else {
-                                $common.fn.notify("操作失败", "error");
-                            }
-                        }
-                    });
-                })
-            },
-            batchDel : function(status) {
+            audit : function(id,status) {
                 var checkBox = $("#dataTables tbody tr").find('input[type=checkbox]:checked');
                 var ids = checkBox.getInputId();
                 var rewardYm = $("#rewardYm").val();
@@ -268,18 +228,19 @@
                     name = "团队";
                 }
                 if(status==1){
-                    $('#showText').html('审核通过该'+name+'将获得'+rewardIntegral+'积分和'+rewardYm+'个益米奖励，确认审核通过？');
+                    $('#showText').html('审核通过所选'+name+'将获得'+rewardIntegral+'积分和'+rewardYm+'个益米奖励，确认审核通过？');
                 }else if(status==2){
-                    $('#showText').html('审核不通过该'+name+'将无法获得积分和益米奖励，确认审核不通过？');
+                    $('#showText').html('审核不通过所选'+name+'将无法获得积分和益米奖励，确认审核不通过？');
                 }
 
                 $("#delete").modal("show");
                 $("#confirm").off("click");
-                if (ids.length > 0){
+                if (ids.length > 0 || id!=null){
                     $("#confirm").on("click",function(){
                         $.ajax({
-                            "url": "${contextPath}/admin/taskJoin/batchDel",
+                            "url": "${contextPath}/admin/taskJoin/audit",
                             "data": {
+                                "id": id,
                                 ids:JSON.stringify(ids),
                                 "status":status,
                                 "rewardYm":rewardYm,
@@ -293,7 +254,8 @@
                                     $("#delete").modal("hide");
                                     $taskJoin.v.dTable.ajax.reload(null,false);
                                 } else {
-                                    $common.fn.notify("操作失败", "error");
+                                    $("#delete").modal("hide");
+                                    $common.fn.notify(result.msg, "error");
                                 }
                             }
                         });

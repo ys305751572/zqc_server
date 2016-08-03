@@ -77,10 +77,6 @@ public class Task extends BaseEntity{
     @Column(name = "creator_id")
     private Long creatorId;
 
-    //是否可用: 0:可用 1:禁止
-    @Column(name = "status")
-    private Integer status;
-
     //关卡
     @Column(name = "checkpoint")
     private String checkpoint;
@@ -92,7 +88,6 @@ public class Task extends BaseEntity{
     //ndxs任务状态
     @Transient
     private String checkpointStatus;
-
 
     public String getTaskStatus() {
         if(getStartDate()!=null && getEndDate()!=null){
@@ -244,14 +239,6 @@ public class Task extends BaseEntity{
 
     public void setCreatorId(Long creatorId) {
         this.creatorId = creatorId;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
     }
 
     public String getCheckpoint() {

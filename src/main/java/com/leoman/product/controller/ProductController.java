@@ -89,6 +89,17 @@ public class ProductController extends GenericEntityController<Product,Product,P
         return "product/add";
     }
 
+    /**
+     * 保存
+     * @param product
+     * @param imageFile
+     * @param imageFile1
+     * @param dgym
+     * @param detail
+     * @param adsDays
+     * @param adsYms
+     * @return
+     */
     @RequestMapping(value = "/save")
     @ResponseBody
     public Result save(Product product, @RequestParam(value = "imageFile",required = false) MultipartFile imageFile,@RequestParam(value = "imageFile",required = false) MultipartFile imageFile1,Integer dgym, String detail, String adsDays, String adsYms){
@@ -106,22 +117,20 @@ public class ProductController extends GenericEntityController<Product,Product,P
                 if(product.getType()==2){
                     product.setYm(p.getYm());
                 }
-                if(product.getType()==1){
-                    product.setYm(dgym);
-                }else{
+                if(product.getType()!=1){
                     product.setNums(p.getNums());
                 }
                 product.setBuyNum(p.getBuyNum());
+                product.setWishingWell(p.getWishingWell());
             }else {
                 if(product.getType()==2){
                     product.setYm(0);
                 }
-                if(product.getType()==1){
-                    product.setYm(dgym);
-                }else{
+                if(product.getType()!=1){
                     product.setNums(0);
                 }
                 product.setBuyNum(0);
+                product.setWishingWell(0);
             }
             if(imageFile!=null && imageFile.getSize()>0) {
                 FileBo fileBo = null;
@@ -194,9 +203,38 @@ public class ProductController extends GenericEntityController<Product,Product,P
         return Result.success();
     }
 
+    /**
+     * 众筹-推荐到许愿池
+     * @param id
+     * @param status
+     * @return
+     */
+    @RequestMapping(value = "/wishingWell")
+    @ResponseBody
+    public Result wishingWell(Long id,Integer status){
+        if(id==null){
+            return Result.failure();
+        }
+        try{
+            List<Product> list = productService.queryByProperty("wishingWell",1);
+            if(!list.isEmpty() &&list.size()>0){
+                Product _p = list.get(0);
+                _p.setWishingWell(0);
+                productService.update(_p);
+            }
+            Product p = productService.queryByPK(id);
+            p.setWishingWell(status);
+            productService.update(p);
+        }catch (RuntimeException e){
+            e.printStackTrace();
+            return Result.failure();
+        }
+        return Result.success();
+    }
+
 
     /**
-     * 保存广告位周期益米
+     * 广告位-保存周期益米
      * @param id
      * @param days
      * @param adsYm

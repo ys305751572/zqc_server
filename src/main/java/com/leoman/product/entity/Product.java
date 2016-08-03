@@ -39,6 +39,9 @@ public class Product extends BaseEntity{
     //type = 1时已经众筹人数
     @Column(name = "buy_num")
     private Integer buyNum;
+    //type = 1时是否推荐到许愿池,0: 没有 1:已推荐(许愿池只能有一条数据)
+    @Column(name = "wishing_well")
+    private Integer wishingWell;
     //开始有效期 type = 0
     @Column(name = "valid_start_date")
     private Long validStartDate;
@@ -178,5 +181,13 @@ public class Product extends BaseEntity{
 
     public void setDetailDesc(String detailDesc) {
         this.detailDesc = detailDesc;
+    }
+
+    public Integer getWishingWell() {
+        return wishingWell;
+    }
+
+    public void setWishingWell(Integer wishingWell) {
+        this.wishingWell = wishingWell;
     }
 }

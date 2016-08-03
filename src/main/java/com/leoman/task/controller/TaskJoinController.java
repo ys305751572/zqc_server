@@ -2,6 +2,10 @@ package com.leoman.task.controller;
 
 import com.leoman.common.controller.common.GenericEntityController;
 import com.leoman.common.factory.DataTableFactory;
+import com.leoman.record.entity.IntegralRecord;
+import com.leoman.record.entity.YmRecord;
+import com.leoman.record.service.IntegralRecordService;
+import com.leoman.record.service.YmRecordService;
 import com.leoman.task.entity.Task;
 import com.leoman.task.entity.TaskJoin;
 import com.leoman.task.service.TaskJoinService;
@@ -41,6 +45,10 @@ public class TaskJoinController extends GenericEntityController<TaskJoin,TaskJoi
     private TeamService teamService;
     @Autowired
     private UserInfoService userInfoService;
+    @Autowired
+    private IntegralRecordService integralRecordService;
+    @Autowired
+    private YmRecordService ymRecordService;
 
     @RequestMapping(value = "/index")
     public String index(Long taskId, Integer joinType, Model model){
@@ -73,36 +81,37 @@ public class TaskJoinController extends GenericEntityController<TaskJoin,TaskJoi
     }
 
     /**
-     * 审核-成功增加积分
+     * 审核
      * @param id
+     * @param ids
      * @param status
      * @param rewardYm
      * @param rewardIntegral
      * @param joinType
      * @return
      */
-    @RequestMapping(value = "/status")
+    @RequestMapping(value = "/audit", method = RequestMethod.POST)
     @ResponseBody
-    public Result status(Long id, Integer status,Integer rewardYm,Integer rewardIntegral,Integer joinType){
-        try{
-            this.audit(status,rewardYm,rewardIntegral,joinType,id);
-        }catch (RuntimeException e){
-            e.printStackTrace();
-            return Result.failure();
-        }
-        return Result.success();
-    }
-
-    @RequestMapping(value = "/batchDel", method = RequestMethod.POST)
-    @ResponseBody
-    public Result batchDel(String ids,Integer status,Integer rewardYm,Integer rewardIntegral,Integer joinType) {
-        if (StringUtils.isBlank(ids)){
+    public Result audit(Long id,String ids,Integer status,Integer rewardYm,Integer rewardIntegral,Integer joinType) {
+        if (StringUtils.isBlank(ids) && id==null){
             return Result.failure();
         }
         try {
-            Long[] ss = JsonUtil.json2Obj(ids,Long[].class);
-            for (Long id : ss) {
-                this.audit(status,rewardYm,rewardIntegral,joinType,id);
+            if(id!=null){
+                this.status(status,rewardYm,rewardIntegral,joinType,id);
+            }else {
+                Long[] ss = JsonUtil.json2Obj(ids,Long[].class);
+                for (Long _id : ss) {
+                    TaskJoin _t = taskJoinService.queryByPK(_id);
+                    if(_t.getStatus()==0){
+                        this.status(status,rewardYm,rewardIntegral,joinType,_id);
+                    }else {
+                        Result r = new Result();
+                        r.setMsg("不能对已审核过任务的再次操作!");
+                        r.setStatus(false);
+                        return r;
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,10 +119,16 @@ public class TaskJoinController extends GenericEntityController<TaskJoin,TaskJoi
         return Result.success();
     }
 
-    private void audit(Integer status,Integer rewardYm,Integer rewardIntegral,Integer joinType,Long id){
+    /**
+     * 个人团队
+     * @param status
+     * @param rewardYm
+     * @param rewardIntegral
+     * @param joinType
+     * @param id
+     */
+    private void status(Integer status,Integer rewardYm,Integer rewardIntegral,Integer joinType,Long id){
         TaskJoin taskJoin = taskJoinService.queryByPK(id);
-        taskJoin.setStatus(status);
-        taskJoinService.update(taskJoin);
         if(status==1){
             //个人
             if(joinType==0){
@@ -121,6 +136,7 @@ public class TaskJoinController extends GenericEntityController<TaskJoin,TaskJoi
                 userInfo.setYm(userInfo.getYm()+rewardYm);
                 userInfo.setIntegral(userInfo.getIntegral()+rewardIntegral);
                 userInfoService.update(userInfo);
+                this.record(taskJoin,rewardYm,rewardIntegral,joinType);
             }
             //团队
             if(joinType==1){
@@ -128,9 +144,41 @@ public class TaskJoinController extends GenericEntityController<TaskJoin,TaskJoi
                 team.setYm(team.getYm()+rewardYm);
                 team.setIntegral(team.getIntegral()+rewardIntegral);
                 teamService.update(team);
+                this.record(taskJoin,rewardYm,rewardIntegral,joinType);
             }
+            taskJoin.setIsAllot(1);
         }
+        taskJoin.setStatus(status);
+        taskJoinService.update(taskJoin);
 
+    }
+
+    /**
+     * 新增经验益米记录
+     * @param taskJoin
+     * @param rewardYm
+     * @param rewardIntegral
+     * @param joinType
+     */
+    private void record(TaskJoin taskJoin,Integer rewardYm,Integer rewardIntegral,Integer joinType){
+        IntegralRecord integralRecord = new IntegralRecord();
+        YmRecord ymRecord = new YmRecord();
+        Task task = taskService.queryByPK(taskJoin.getTaskId());
+        integralRecord.setJoinId(taskJoin.getJoinId());
+        integralRecord.setIntegral(rewardIntegral);
+        integralRecord.setType(joinType);
+        ymRecord.setJoinId(taskJoin.getJoinId());
+        ymRecord.setYm(rewardYm);
+        ymRecord.setType(joinType);
+        if(joinType==0){
+            integralRecord.setContent("完成个人任务:["+task.getName()+"]所得积分");
+            ymRecord.setContent("完成个人任务:["+task.getName()+"]所得益米");
+        }else {
+            integralRecord.setContent("完成团队任务:["+task.getName()+"]所得积分");
+            ymRecord.setContent("完成团队任务:["+task.getName()+"]所得益米");
+        }
+        integralRecordService.save(integralRecord);
+        ymRecordService.save(ymRecord);
     }
 
 }

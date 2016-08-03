@@ -72,7 +72,7 @@
             </a>
             <ul class="list-unstyled menu-item">
                 <li><a href="${contextPath}/admin/product/index">商品列表</a></li>
-                <li><a href="${contextPath}/admin/admin/index">兑换列表列表</a></li>
+                <li><a href="${contextPath}/admin/productExchangeRecord/index">兑换列表列表</a></li>
             </ul>
         </li>
         <li class="dropdown">
@@ -80,7 +80,7 @@
                 <span class="menu-item">站长工具管理</span>
             </a>
             <ul class="list-unstyled menu-item">
-                <li><a href="${contextPath}/admin/admin/index">意见反馈列表</a></li>
+                <li><a href="${contextPath}/admin/report/index">意见反馈列表</a></li>
             </ul>
         </li>
     </ul>
