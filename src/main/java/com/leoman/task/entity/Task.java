@@ -4,6 +4,7 @@ import com.leoman.common.entity.BaseEntity;
 import com.leoman.utils.ConfigUtil;
 import com.leoman.utils.DateUtil;
 import com.leoman.utils.DateUtils;
+import org.apache.commons.lang.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -90,6 +91,22 @@ public class Task extends BaseEntity{
     @Transient
     private String checkpointStatus;
 
+    //封面图片绝对路径
+    @Transient
+    private String coverUrlAbsolutePath;
+
+    public String getCoverUrlAbsolutePath() {
+        if(StringUtils.isNotBlank(coverUrl)){
+            return ConfigUtil.getString("upload.url") + getCoverUrl();
+        }else {
+            return "";
+        }
+    }
+
+    public void setCoverUrlAbsolutePath(String coverUrlAbsolutePath) {
+        this.coverUrlAbsolutePath = coverUrlAbsolutePath;
+    }
+
     public String getTaskStatus() {
         if(getStartDate()!=null && getEndDate()!=null){
             if(this.getStartDate()<System.currentTimeMillis() && this.getEndDate()>System.currentTimeMillis()){
@@ -139,7 +156,7 @@ public class Task extends BaseEntity{
     }
 
     public String getCoverUrl() {
-        return ConfigUtil.getString("upload.url") + this.coverUrl;
+        return coverUrl;
     }
 
     public void setCoverUrl(String coverUrl) {

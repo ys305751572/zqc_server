@@ -2,6 +2,7 @@ package com.leoman.product.entity;
 
 import com.leoman.common.entity.BaseEntity;
 import com.leoman.utils.ConfigUtil;
+import org.apache.commons.lang.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -61,6 +62,36 @@ public class Product extends BaseEntity{
     //众筹益米
     @Transient
     private Integer zcym;
+    //封面图片绝对路径
+    @Transient
+    private String coverUrlAbsolutePath;
+    //详情图片绝对路径
+    @Transient
+    private String detailImageUrlAbsolutePath;
+
+    public String getDetailImageUrlAbsolutePath() {
+        if(StringUtils.isNotBlank(detailImageUrl)){
+            return ConfigUtil.getString("upload.url") + getDetailImageUrl();
+        }else {
+            return "";
+        }
+    }
+
+    public void setDetailImageUrlAbsolutePath(String detailImageUrlAbsolutePath) {
+        this.detailImageUrlAbsolutePath = detailImageUrlAbsolutePath;
+    }
+
+    public String getCoverUrlAbsolutePath() {
+        if(StringUtils.isNotBlank(coverUrl)){
+            return ConfigUtil.getString("upload.url") + getCoverUrl();
+        }else {
+            return "";
+        }
+    }
+
+    public void setCoverUrlAbsolutePath(String coverUrlAbsolutePath) {
+        this.coverUrlAbsolutePath = coverUrlAbsolutePath;
+    }
 
     public Integer getZcym() {
         if(getType()==1){
@@ -113,7 +144,7 @@ public class Product extends BaseEntity{
     }
 
     public String getCoverUrl() {
-        return ConfigUtil.getString("upload.url") + this.coverUrl;
+        return coverUrl;
     }
 
     public void setCoverUrl(String coverUrl) {
@@ -121,7 +152,7 @@ public class Product extends BaseEntity{
     }
 
     public String getDetailImageUrl() {
-        return ConfigUtil.getString("upload.url") + this.detailImageUrl;
+        return detailImageUrl;
     }
 
     public void setDetailImageUrl(String detailImageUrl) {

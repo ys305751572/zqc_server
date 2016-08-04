@@ -125,7 +125,7 @@
                         <label>封面：</label>
                         <div class="fileupload fileupload-new" data-provides="fileupload">
                             <div class="fileupload-preview thumbnail form-control">
-                                <img src="${product.coverUrl}">
+                                <img src="${product.coverUrlAbsolutePath}">
                             </div>
                             <div>
                                 <span class="btn btn-file btn-alt btn-sm">
@@ -140,13 +140,13 @@
                         <label>详情图片：</label>
                         <div class="fileupload fileupload-new" data-provides="fileupload">
                             <div class="fileupload-preview thumbnail form-control">
-                                <img src="${product.detailImageUrl}">
+                                <img src="${product.detailImageUrlAbsolutePath}">
                             </div>
                             <div>
                                 <span class="btn btn-file btn-alt btn-sm">
                                     <span class="fileupload-new">选择图片</span>
                                     <span class="fileupload-exists">更改</span>
-                                    <input id="imageFile2" name="imageFile2" type="file"/>
+                                    <input id="imageFile1" name="imageFile1" type="file"/>
                                 </span>
                             </div>
                         </div>
@@ -303,7 +303,7 @@
                 }
                 var isCheck = true;
                 var type = $("#type").val();
-                if($('.fileupload-preview img').size()<1 || $('.fileupload-preview img').width()==0){
+                if($('.fileupload-preview img').size()<2 || $('.fileupload-preview img').width()==0){
                     $leoman.notify('图片不能为空', "error");
                     isCheck=false;
                 }

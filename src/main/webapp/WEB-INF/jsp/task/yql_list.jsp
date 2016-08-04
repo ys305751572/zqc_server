@@ -125,7 +125,7 @@
                         {
                             "data": "",
                             render: function (data,type,full) {
-                                var coverUrl = full.coverUrl;
+                                var coverUrl = full.coverUrlAbsolutePath;
                                 var name = full.name;
                                 return "<img src='"+ coverUrl + "'>"+name;
                             },

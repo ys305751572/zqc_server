@@ -102,7 +102,7 @@ public class ProductController extends GenericEntityController<Product,Product,P
      */
     @RequestMapping(value = "/save")
     @ResponseBody
-    public Result save(Product product, @RequestParam(value = "imageFile",required = false) MultipartFile imageFile,@RequestParam(value = "imageFile",required = false) MultipartFile imageFile1,Integer dgym, String detail, String adsDays, String adsYms){
+    public Result save(Product product, @RequestParam(value = "imageFile",required = false) MultipartFile imageFile,@RequestParam(value = "imageFile1",required = false) MultipartFile imageFile1,Integer dgym, String detail, String adsDays, String adsYms){
         Product p = null;
         try {
             if(null != product.getId()){

@@ -73,8 +73,8 @@
                         <label>封面:</label>
                         <p></p>
                         <p></p>
-                        <a href="${task.coverUrl}" data-rel="gallery"  class="pirobox_gall img-popup" title="封面">
-                            <img src="${task.coverUrl}" alt="">
+                        <a href="${task.coverUrlAbsolutePath}" data-rel="gallery"  class="pirobox_gall img-popup" title="封面">
+                            <img src="${task.coverUrlAbsolutePath}" alt="">
                         </a>
                     </div>
                     <hr class="whiter m-t-20"/>

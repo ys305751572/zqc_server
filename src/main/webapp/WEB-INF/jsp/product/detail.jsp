@@ -87,6 +87,25 @@
                     </c:if>
 
                     <hr class="whiter m-t-20"/>
+                    <div class="col-md-3 m-b-15">
+                        <input type="hidden" id="coverUrl" name="coverUrl" value="">
+                        <label>封面:</label>
+                        <p></p>
+                        <p></p>
+                        <a href="${product.coverUrlAbsolutePath}" data-rel="gallery"  class="pirobox_gall img-popup" title="封面">
+                            <img src="${product.coverUrlAbsolutePath}" alt="">
+                        </a>
+                    </div>
+                    <div class="col-md-3 m-b-15">
+                        <input type="hidden" id="detailImageUrl" name="detailImageUrl" value="">
+                        <label>详情图片:</label>
+                        <p></p>
+                        <p></p>
+                        <a href="${product.detailImageUrlAbsolutePath}" data-rel="gallery"  class="pirobox_gall img-popup" title="封面">
+                            <img src="${product.detailImageUrlAbsolutePath}" alt="">
+                        </a>
+                    </div>
+                    <hr class="whiter m-t-20"/>
                     <div class="col-md-12 m-b-15">
                         <label>详细描述:</label>
                         <div class="wysiwye-editor" id="detailDesc" name="detailDesc" disabled>${product.detailDesc}</div>
@@ -115,7 +134,6 @@
         },
         fn: {
             init: function () {
-                $user.fn.initImage();
             }
         }
     };
