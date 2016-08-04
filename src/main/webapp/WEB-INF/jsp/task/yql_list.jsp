@@ -167,8 +167,8 @@
                                 var joinType = full.joinType;
                                 var del = "<button title='删除' class='btn btn-primary btn-circle detail' onclick=\"$task.fn.del(\'" + data + "\')\">" +
                                         "<i class='fa fa-trash'></i></button>";
-                                var taskJoin = "<button title='报名' class='btn btn-primary btn-circle detail' onclick=\"$task.fn.taskJoin(\'" + id + "\',\'" + joinType + "\')\">" +
-                                        "<i class='fa fa-eye'></i></button>";
+                                var taskJoin = "<button title='报名成员' class='btn btn-primary btn-circle detail' onclick=\"$task.fn.taskJoin(\'" + id + "\',\'" + joinType + "\')\">" +
+                                        "<i class='fa fa-user'></i></button>";
                                 return detail +"&nbsp;"+ del +"&nbsp;"+ taskJoin;
                             }
                         }

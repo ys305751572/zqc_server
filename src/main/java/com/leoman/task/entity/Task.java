@@ -1,6 +1,7 @@
 package com.leoman.task.entity;
 
 import com.leoman.common.entity.BaseEntity;
+import com.leoman.utils.ConfigUtil;
 import com.leoman.utils.DateUtil;
 import com.leoman.utils.DateUtils;
 
@@ -138,7 +139,7 @@ public class Task extends BaseEntity{
     }
 
     public String getCoverUrl() {
-        return coverUrl;
+        return ConfigUtil.getString("upload.url") + this.coverUrl;
     }
 
     public void setCoverUrl(String coverUrl) {

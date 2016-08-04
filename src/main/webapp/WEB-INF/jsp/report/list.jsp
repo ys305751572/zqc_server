@@ -59,6 +59,7 @@
                     <th>用户手机</th>
                     <th>反馈时间</th>
                     <th>反馈详情</th>
+                    <th>详情信息</th>
                 </tr>
                 </thead>
             </table>
@@ -69,6 +70,7 @@
 <!-- JS -->
 <%@ include file="../inc/new/foot.jsp" %>
 <%@ include file="../inc/new/del.jsp" %>
+<%@ include file="detail.jsp" %>
 
 <script>
     $report = {
@@ -82,7 +84,6 @@
                 $("#c_search").click(function () {
                     $report.v.dTable.ajax.reload();
                 });
-
             },
             dataTableInit: function () {
                 $report.v.dTable = $leoman.dataTable($('#dataTables'), {
@@ -109,7 +110,25 @@
                             },
                             "sDefaultContent" : ""
                         },
-                        {"data": "content","sDefaultContent" : ""}
+                        {
+                            "data": "content",
+                            render: function (data) {
+                                if (null != data && data != '') {
+                                    return data.length > 30 ? (data.substring(0, 30) + '...') : data;
+                                } else {
+                                    return "";
+                                }
+                            },
+                            "sDefaultContent" : ""
+                        },
+                        {
+                            "data": "content",
+                            "render": function (data,type,full) {
+                                var detail = "<button title='查看详情' class='btn btn-primary btn-circle detail' onclick=\"$report.fn.detail(\'" + data + "\')\">" +
+                                        "<i class='fa fa-eye'></i></button>";
+                                return detail
+                            }
+                        }
 
                     ],
                     "fnServerParams": function (aoData) {
@@ -142,6 +161,10 @@
                         }
                     });
                 })
+            },
+            detail : function(data){
+                $('#detail').html(data);
+                $("#form_detail").modal("show");
             },
             responseComplete: function (result, action) {
                 if (result.status) {

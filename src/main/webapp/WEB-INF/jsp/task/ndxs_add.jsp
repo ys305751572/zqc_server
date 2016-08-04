@@ -23,7 +23,7 @@
             <li><a href="javascript:history.go(-1);" title="返回"><span class="icon">&#61771;</span></a></li>
         </ol>
         <h1 class="page-title">添加活动</h1>
-        <form id="fromId" name="formName" method="post" enctype="multipart/form-data"
+        <form id="formId" name="formName" method="post" enctype="multipart/form-data"
               class="box tile animated active form-validation-1">
             <div class="block-area">
                 <input type="hidden" id="id" name="id" value="">
@@ -84,27 +84,17 @@
 
             },
             save: function () {
+                if(!$("#formId").validationEngine("validate")) {
+                    return;
+                }
                 var isCheck = true;
-                if($("#name").val()==""){
-                    $leoman.notify('名称不能为空', "error");
-                    isCheck=false;
-                }
-                if($("#checkpoint").val()==""){
-                    $leoman.notify('关卡不能为空', "error");
-                    isCheck=false;
-                }
-
-                if($("#rewardIntegral").val()==""){
-                    $leoman.notify('奖励积分人数不能为空', "error");
-                    isCheck=false;
-                }
-                if($("#rewardYm").val()==""){
-                    $leoman.notify('奖励益米人数不能为空', "error");
+                if($('.note-editable').text()==""){
+                    $leoman.notify('详细描述不能为空', "error");
                     isCheck=false;
                 }
                 if(isCheck){
                     var code = $('.wysiwye-editor').code();
-                    $("#fromId").ajaxSubmit({
+                    $("#formId").ajaxSubmit({
                         url: "${contextPath}/admin/task/ndxs/save",
                         type: "POST",
                         data: {

@@ -66,12 +66,12 @@
                     </li>
                     <li class="show-on" style="display: none;">
                         <a href="javascript:void(0)" onclick="$taskJoin.fn.audit(null,1);" title="一键审核通过" class="tooltips">
-                            <i class="sa-list-back"></i>
+                            <i class="sa-list-month"></i>
                         </a>
                     </li>
                     <li class="show-on" style="display: none;">
                         <a href="javascript:void(0)" onclick="$taskJoin.fn.audit(null,2);" title="一键审核不通过" class="tooltips">
-                            <i class="sa-list-back"></i>
+                            <i class="sa-list-week"></i>
                         </a>
                     </li>
                 </ul>

@@ -23,7 +23,7 @@
             <li><a href="javascript:history.go(-1);" title="返回"><span class="icon">&#61771;</span></a></li>
         </ol>
         <h1 class="page-title">添加活动</h1>
-        <form id="fromId" name="formName" method="post" enctype="multipart/form-data"
+        <form id="formId" name="formName" method="post" enctype="multipart/form-data"
               class="box tile animated active form-validation-1">
             <div class="block-area">
                 <input type="hidden" id="id" name="id" value="">
@@ -44,12 +44,12 @@
                     </div>
                     <div class="col-md-3 m-b-15">
                         <label>活动开始时间：</label>
-                        <input type="text" id="sDate" value="" name="sDate" class="input-sm form_datetime form-control " placeholder="..." >
+                        <input type="text" id="sDate" value="" name="sDate" class="input-sm form_datetime form-control validate[required] " placeholder="..." >
                         <input type="hidden" id="startDate" value="" name="startDate">
                     </div>
                     <div class="col-md-3 m-b-15">
                         <label>结束时间</label>
-                        <input type="text" id="eDate" value="" name="eDate" class="input-sm form_datetime form-control " placeholder="..." >
+                        <input type="text" id="eDate" value="" name="eDate" class="input-sm form_datetime form-control validate[required] " placeholder="..." >
                         <input type="hidden" id="endDate" value="" name="endDate">
                     </div>
 
@@ -150,41 +150,16 @@
                 });
             },
             save: function () {
+                if(!$("#formId").validationEngine("validate")) {
+                    return;
+                }
                 var isCheck = true;
-                if($("#name").val()==""){
-                    $leoman.notify('名称不能为空', "error");
+                if($('.fileupload-preview img').size()<1 || $('.fileupload-preview img').width()==0){
+                    $leoman.notify('图片不能为空', "error");
                     isCheck=false;
                 }
-                if($("#joinType").val()==""){
-                    $leoman.notify('活动类型不能为空', "error");
-                    isCheck=false;
-                }
-                if($("#sDate").val()==""){
-                    $leoman.notify('活动开始时间不能为空', "error");
-                    isCheck=false;
-                }
-                if($("#eDate").val()==""){
-                    $leoman.notify('活动开始时间不能为空', "error");
-                    isCheck=false;
-                }
-                if($("#address").val()==""){
-                    $leoman.notify('活动地点不能为空', "error");
-                    isCheck=false;
-                }
-                if($("#organizers").val()==""){
-                    $leoman.notify('主办方不能为空', "error");
-                    isCheck=false;
-                }
-                if($("#nums").val()==""){
-                    $leoman.notify('活动所需人数不能为空', "error");
-                    isCheck=false;
-                }
-                if($("#rewardIntegral").val()==""){
-                    $leoman.notify('奖励积分人数不能为空', "error");
-                    isCheck=false;
-                }
-                if($("#rewardYm").val()==""){
-                    $leoman.notify('奖励益米人数不能为空', "error");
+                if($('.note-editable').text()==""){
+                    $leoman.notify('详细描述不能为空', "error");
                     isCheck=false;
                 }
                 if(isCheck){
@@ -193,7 +168,7 @@
                     $("#startDate").val(startDate);
                     var endDate = this.transdate($("#eDate").val());
                     $("#endDate").val(endDate);
-                    $("#fromId").ajaxSubmit({
+                    $("#formId").ajaxSubmit({
                         url: "${contextPath}/admin/task/yql/save",
                         type: "POST",
                         data: {
@@ -208,6 +183,7 @@
                         }
                     });
                 }
+
             },
             transdate :function(endTime){
                 var date=new Date();

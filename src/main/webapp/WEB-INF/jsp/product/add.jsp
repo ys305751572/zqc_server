@@ -23,7 +23,7 @@
             <li><a href="javascript:history.go(-1);" title="返回"><span class="icon">&#61771;</span></a></li>
         </ol>
         <h1 class="page-title"></h1>
-        <form id="fromId" name="formName" method="post" enctype="multipart/form-data"
+        <form id="formId" name="formName" method="post" enctype="multipart/form-data"
               class="box tile animated active form-validation-1">
             <div class="block-area">
                 <input type="hidden" id="id" name="id" value="${product.id}">
@@ -68,13 +68,13 @@
                             </div>
                             <div class="col-md-3 m-b-15">
                                 <label>兑换有效期开始时间：</label>
-                                <input type="text" id="sDate" value="<date:date format='yyyy-MM-dd HH:mm:ss' value='${product.validStartDate}'></date:date>" name="sDate" class="input-sm form_datetime form-control " placeholder="..." >
+                                <input type="text" id="sDate" value="<date:date format='yyyy-MM-dd HH:mm:ss' value='${product.validStartDate}'></date:date>" name="sDate" class="input-sm form_datetime form-control validate[required]" placeholder="..." >
                                 <input type="hidden" id="validStartDate" value="" name="validStartDate">
                             </div>
 
                             <div class="col-md-3 m-b-15">
                                 <label>结束时间</label>
-                                <input type="text" id="eDate" value="<date:date format='yyyy-MM-dd HH:mm:ss' value='${product.validEndDate}'></date:date>" name="eDate" class="input-sm form_datetime form-control " placeholder="..." >
+                                <input type="text" id="eDate" value="<date:date format='yyyy-MM-dd HH:mm:ss' value='${product.validEndDate}'></date:date>" name="eDate" class="input-sm form_datetime form-control validate[required]" placeholder="..." >
                                 <input type="hidden" id="validEndDate" value="" name="validEndDate">
                             </div>
                             <div class="col-md-6 m-b-15">
@@ -251,13 +251,13 @@
                     html += " </div>                                                                                                                    ";
                     html += " <div class='col-md-3 m-b-15'>                                                                                             ";
                     html += "     <label>兑换有效期开始时间：</label>                                                                                   ";
-                    html += "     <input type='text' id='sDate' value='' name='sDate' class='input-sm form_datetime form-control ' placeholder='...' >  ";
+                    html += "     <input type='text' id='sDate' value='' name='sDate' class='input-sm form_datetime form-control validate[required]' placeholder='...' >  ";
                     html += "     <input type='hidden' id='validStartDate' value='' name='validStartDate'>                                              ";
                     html += " </div>                                                                                                                    ";
                     html += "                                                                                                                           ";
                     html += " <div class='col-md-3 m-b-15'>                                                                                             ";
                     html += "     <label>结束时间</label>                                                                                               ";
-                    html += "     <input type='text' id='eDate' value='' name='eDate' class='input-sm form_datetime form-control ' placeholder='...' >  ";
+                    html += "     <input type='text' id='eDate' value='' name='eDate' class='input-sm form_datetime form-control validate[required]' placeholder='...' >  ";
                     html += "     <input type='hidden' id='validEndDate' value='' name='validEndDate'>                                                  ";
                     html += " </div>                                                                                                                    ";
                     html += " <div class='col-md-6 m-b-15'>                                                                                             ";
@@ -298,17 +298,11 @@
                 $("#button").append(but);
             },
             save: function () {
+                if(!$("#formId").validationEngine("validate")) {
+                    return;
+                }
                 var isCheck = true;
                 var type = $("#type").val();
-                if($("#name").val()==""){
-                    $leoman.notify('名称不能为空', "error");
-                    isCheck=false;
-                }
-                if($("#shortDesc").val()==""){
-                    $leoman.notify('简短描述不能为空', "error");
-                    isCheck=false;
-                }
-
                 if($('.fileupload-preview img').size()<1 || $('.fileupload-preview img').width()==0){
                     $leoman.notify('图片不能为空', "error");
                     isCheck=false;
@@ -317,60 +311,19 @@
                     $leoman.notify('详细描述不能为空', "error");
                     isCheck=false;
                 }
-                if(type==0){
-                    if($("#ym").val()==""){
-                        $leoman.notify('所需益米不能为空', "error");
-                        isCheck=false;
-                    }
-                    if($("#sDate").val()==""){
-                        $leoman.notify('兑换有效期开始时间不能为空', "error");
-                        isCheck=false;
-                    }
-                    if($("#eDate").val()==""){
-                        $leoman.notify('结束时间不能为空', "error");
-                        isCheck=false;
-                    }
-                    if($("#address").val()==""){
-                        $leoman.notify('兑换地点不能为空', "error");
-                        isCheck=false;
-                    }
-                }
-                if(type==1){
-                    if($("#nums").val()==""){
-                        $leoman.notify('所需人数不能为空', "error");
-                        isCheck=false;
-                    }
-                    if($("#dgym").val()==""){
-                        $leoman.notify('单个售价不能为空', "error");
-                        isCheck=false;
-                    }
-                }
-                if(type==2){
-
-                    $product_add.v.days = [];
-                    $("#change input[name=days]").each(function(){
-                        if($(this).val()==""){
-                            $leoman.notify('展示周期不能为空', "error");
-                            isCheck=false;
-                            return false;
-                        }else {
-                            $product_add.v.days.push($(this).val());
-                        }
-                    });
-
-                    $product_add.v.adsYm = [];
-                    $("#change input[name=adsYm]").each(function(){
-                        if($(this).val()==""){
-                            $leoman.notify('所需益米不能为空', "error");
-                            isCheck=false;
-                            return false;
-                        }else {
-                            $product_add.v.adsYm.push($(this).val());
-                        }
-                    });
-                }
-
                 if(isCheck){
+                    if(type==2){
+                        //展示周期
+                        $product_add.v.days = [];
+                        $("#change input[name=days]").each(function(){
+                            $product_add.v.days.push($(this).val());
+                        });
+                        //所需益米
+                        $product_add.v.adsYm = [];
+                        $("#change input[name=adsYm]").each(function(){
+                            $product_add.v.adsYm.push($(this).val());
+                        });
+                    }
                     var nums = $("nums").val();
                     $("#type").val(type);
                     var code = $('.wysiwye-editor').code();
@@ -383,8 +336,7 @@
                     }
                     //众筹
                     var dgym = $("#dgym").val();
-
-                    $("#fromId").ajaxSubmit({
+                    $("#formId").ajaxSubmit({
                         url: "${contextPath}/admin/product/save",
                         type: "POST",
                         data: {

@@ -1,6 +1,7 @@
 package com.leoman.product.entity;
 
 import com.leoman.common.entity.BaseEntity;
+import com.leoman.utils.ConfigUtil;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -112,7 +113,7 @@ public class Product extends BaseEntity{
     }
 
     public String getCoverUrl() {
-        return coverUrl;
+        return ConfigUtil.getString("upload.url") + this.coverUrl;
     }
 
     public void setCoverUrl(String coverUrl) {
@@ -120,7 +121,7 @@ public class Product extends BaseEntity{
     }
 
     public String getDetailImageUrl() {
-        return detailImageUrl;
+        return ConfigUtil.getString("upload.url") + this.detailImageUrl;
     }
 
     public void setDetailImageUrl(String detailImageUrl) {
