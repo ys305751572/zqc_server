@@ -43,7 +43,7 @@
             <a class="sa-side-form" href="">
                 <span class="menu-item">账号管理</span>
             </a>
-            <ul class="list-unstyled menu-item">
+            <ul class="list-unstyled menu-item menu_chioce">
                 <li><a href="${contextPath}/admin/userinfo/index">会员列表</a></li>
                 <li><a href="${contextPath}/admin/team/index">团队列表</a></li>
             </ul>
