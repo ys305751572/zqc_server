@@ -166,7 +166,8 @@ public class ProductController extends GenericEntityController<Product,Product,P
                         productAdsService.delete(_p);
                     }
                 }
-                this.adsSave(product.getId(),adsDays,adsYms);
+//                this.adsSave(product.getId(),adsDays,adsYms);
+                productAdsService.adsSave(product.getId(),adsDays,adsYms);
             }
         }catch (RuntimeException e){
             e.printStackTrace();

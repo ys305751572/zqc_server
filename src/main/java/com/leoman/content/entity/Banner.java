@@ -12,7 +12,7 @@ import javax.persistence.Table;
  */
 
 @Entity
-@Table(name = "t_bannar")
+@Table(name = "t_banner")
 public class Banner extends BaseEntity{
 
     @Column(name = "image_url")
