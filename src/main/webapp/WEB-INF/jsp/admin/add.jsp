@@ -16,6 +16,7 @@
 <%@ include file="../inc/new/header.jsp" %>
 <div class="clearfix"></div>
 <section id="main" class="p-relative" role="main">
+    <input type="hidden" value="权限管理">
     <%@ include file="../inc/new/menu.jsp" %>
     <section id="content" class="container">
         <!-- Breadcrumb -->

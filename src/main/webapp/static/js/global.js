@@ -3,8 +3,9 @@ $(function () {
     //menu
     $('.dropdown').each(function(){
         $(this).find('ul').each(function() {
-            var hasChioce =  $(this).hasClass("menu_chioce");
-            if(hasChioce) {
+            var menu_a = $(this).parent().find("a").eq(0).text().trim();
+            var page_title = $("#main input").eq(0).val();
+            if (menu_a == page_title) {
                 $(this).slideToggle();
             }
         });
