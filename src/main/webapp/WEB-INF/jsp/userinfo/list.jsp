@@ -16,7 +16,8 @@
 <%@ include file="../inc/new/header.jsp" %>
 <div class="clearfix"></div>
 <section id="main" class="p-relative" role="main">
-    <input type="hidden" value="账号管理">
+    <input type="hidden" id="mian_module" value="账号管理">
+    <input type="hidden" id="child_module" value="会员列表">
     <%@ include file="../inc/new/menu.jsp" %>
     <section id="content" class="container">
         <!-- 查询条件 -->
@@ -50,28 +51,7 @@
         <div class="block-area" id="alternative-buttons">
             <button id="c_search" class="btn btn-alt m-r-5">查询</button>
         </div>
-        <%--<hr class="whiter m-t-20"/>--%>
-        <%--<div class="block-area">--%>
-            <%--<div class="row">--%>
-                <%--<ul class="list-inline list-mass-actions">--%>
-                    <%--<li>--%>
-                        <%--<a data-toggle="modal" href="${contextPath}/admin/doctor/add" title="新增" class="tooltips">--%>
-                            <%--<i class="sa-list-add"></i>--%>
-                        <%--</a>--%>
-                    <%--</li>--%>
-                    <%--<li>--%>
-                        <%--<a href="" title="刷新" class="tooltips">--%>
-                            <%--<i class="sa-list-refresh"></i>--%>
-                        <%--</a>--%>
-                    <%--</li>--%>
-                    <%--<li class="show-on" style="display: none;">--%>
-                        <%--<a href="" title="删除" class="tooltips">--%>
-                            <%--<i class="sa-list-delete"></i>--%>
-                        <%--</a>--%>
-                    <%--</li>--%>
-                <%--</ul>--%>
-            <%--</div>--%>
-        <%--</div>--%>
+
         <hr class="whiter m-t-20"/>
         <!-- form表格 -->
         <div class="block-area" id="tableHover">
@@ -96,6 +76,7 @@
 </section>
 <!-- JS -->
 <%@ include file="../inc/new/foot.jsp" %>
+<%@ include file="../inc/new/del.jsp" %>
 
 <script>
     _userInfo = {
@@ -168,10 +149,10 @@
                                         "<i class='fa fa-pencil-square-o'></i></button>";
                                 var st = full.status;
                                 if(st==0){
-                                    var status = "<button title='禁用' class='btn btn-primary btn-circle detail' onclick='_userInfo.fn.close("+data+",1)'> " +
+                                    var status = "<button title='禁用' class='btn btn-primary btn-circle detail' onclick=\"_userInfo.fn.changeStatus(\'" + data + "\',\'" + st + "\')\"> " +
                                          "<i class='fa fa fa-ban'></i></button>";
                                 }else if(st==1){
-                                    var status = "<button title='解禁' class='btn btn-primary btn-circle detail' onclick='_userInfo.fn.open("+ data +",0)'> " +
+                                    var status = "<button title='解禁' class='btn btn-primary btn-circle detail' onclick=\"_userInfo.fn.changeStatus(\'" + data + "\',\'" + st + "\')\"> " +
                                         "<i class='fa fa-check'></i></button>";
                                 }
                                 return detail+ "&nbsp;" + edit +"&nbsp;"  + status;
@@ -186,16 +167,6 @@
                     }
                 });
             },
-            close:function (userId,status){
-                if(confirm('您确定要禁用该用户吗？')){
-                    _userInfo.fn.status(userId,status);
-                }
-            },
-            open:function (userId,status){
-                if(confirm('您确定要解禁该用户吗？')){
-                    _userInfo.fn.status(userId,status);
-                }
-            },
             detail : function(userId) {
                 window.location.href = "${contextPath}/admin/userinfo/detail?id=" + userId;
             },
@@ -203,24 +174,35 @@
             edit : function(userId) {
                 window.location.href = "${contextPath}/admin/userinfo/add?id=" + userId;
             },
-
-            status : function(userId,status) {
-                $.ajax({
-                    "url": "${contextPath}/admin/userinfo/status",
-                    "data": {
-                        "userId": userId,
-                        "status":status
-                    },
-                    "dataType": "json",
-                    "type": "POST",
-                    success: function (result) {
-                        if (!result.status) {
-                            $common.fn.notify(result.msg);
-                            return;
+            "changeStatus": function (id,st) {
+                var tempStatus = 0;
+                if(st==0){
+                    $('#showText').html('您确定要禁用该用户吗？');
+                    tempStatus = 1;
+                }else if(st==1){
+                    $('#showText').html('您确定要解禁该用户吗？');
+                }
+                $("#delete").modal("show");
+                $("#confirm").off("click");
+                $("#confirm").on("click",function(){
+                    $.ajax({
+                        "url": "${contextPath}/admin/userinfo/status",
+                        "data": {
+                            "id": id,
+                            "status":tempStatus
+                        },
+                        "dataType": "json",
+                        "type": "POST",
+                        success: function (result) {
+                            if (result.status) {
+                                $("#delete").modal("hide");
+                                _userInfo.v.dTable.ajax.reload(null,false);
+                            } else {
+                                $common.fn.notify("操作失败", "error");
+                            }
                         }
-                        _userInfo.v.dTable.ajax.reload();
-                    }
-                });
+                    });
+                })
             },
             responseComplete: function (result, action) {
                 if (result.status == "0") {

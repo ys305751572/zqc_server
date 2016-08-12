@@ -16,7 +16,8 @@
 <%@ include file="../inc/new/header.jsp" %>
 <div class="clearfix"></div>
 <section id="main" class="p-relative" role="main">
-    <input type="hidden" value="内容管理">
+    <input type="hidden" id="mian_module" value="内容管理">
+    <input type="hidden" id="child_module" value="banner广告列表">
     <%@ include file="../inc/new/menu.jsp" %>
     <section id="content" class="container">
         <!-- 查询条件 -->
@@ -65,7 +66,7 @@
                         </a>
                     </li>
                     <li class="show-on" style="display: none;">
-                        <a href="javascript:void(0)" onclick="_userInfo.fn.batchDel();" title="删除" class="tooltips">
+                        <a href="javascript:void(0)" onclick="$banner.fn.del();" title="删除" class="tooltips">
                             <i class="sa-list-delete"></i>
                         </a>
                     </li>
@@ -94,23 +95,24 @@
 </section>
 <!-- JS -->
 <%@ include file="../inc/new/foot.jsp" %>
+<%@ include file="../inc/new/del.jsp" %>
 
 <script>
-    _userInfo = {
+    $banner = {
         v: {
             list: [],
             dTable: null
         },
         fn: {
             init: function () {
-                _userInfo.fn.dataTableInit();
+                $banner.fn.dataTableInit();
                 $("#c_search").click(function () {
-                    _userInfo.v.dTable.ajax.reload();
+                    $banner.v.dTable.ajax.reload();
                 });
 
             },
             dataTableInit: function () {
-                _userInfo.v.dTable = $leoman.dataTable($('#dataTables'), {
+                $banner.v.dTable = $leoman.dataTable($('#dataTables'), {
                     "processing": true,
                     "serverSide": true,
                     "searching": false,
@@ -168,10 +170,10 @@
                             "data": "id",
                             "render": function (data,type,full) {
 
-                                var edit = "<button title='编辑' class='btn btn-primary btn-circle detail' onclick='_userInfo.fn.edit("+ data +")'> " +
+                                var edit = "<button title='编辑' class='btn btn-primary btn-circle detail' onclick='$banner.fn.edit("+ data +")'> " +
                                         "<i class='fa fa-pencil-square-o'></i></button>";
 
-                                var del = "<button title='删除' class='btn btn-primary btn-circle detail' onclick='_userInfo.fn.del("+data+",1)'> " +
+                                var del = "<button title='删除' class='btn btn-primary btn-circle detail' onclick='$banner.fn.del("+data+",1)'> " +
                                         "<i class='fa fa-trash'></i></button>";
                                 return edit +"&nbsp;"  + del;
                             }
@@ -185,51 +187,45 @@
                     }
                 });
             },
-            del:function (id){
-                if(confirm('您确定要禁用该用户吗？')){
-                    _userInfo.fn.status(id);
-                }
-            },
             edit : function(id) {
                 window.location.href = "${contextPath}/admin/banner/add?id=" + id;
             },
-
-            status : function(id) {
-                $.ajax({
-                    "url": "${contextPath}/admin/banner/delete",
-                    "data": {
-                        "id": id
-                    },
-                    "dataType": "json",
-                    "type": "POST",
-                    success: function (result) {
-                        if (!result.status) {
-                            $common.fn.notify(result.msg);
-                            return;
-                        }
-                        _userInfo.v.dTable.ajax.reload();
-                    }
-                });
-            },
-            batchDel : function() {
+            "del": function (id) {
+                if(id!=null){
+                    $('#showText').html('您确定要彻底删除该广告吗？');
+                }else{
+                    $('#showText').html('您确定要彻底删除这些广告吗？');
+                }
                 var checkBox = $("#dataTables tbody tr").find('input[type=checkbox]:checked');
                 var ids = checkBox.getInputId();
-
-                if (ids.length > 0 && confirm("您确定要删除这些记录吗？")) {
-                    $.post("${contextPath}/admin/banner/batchDel",{ids:JSON.stringify(ids)},function(result) {
-                        console.log(result.status);
-                        if(result.status) {
-                            _userInfo.fn.responseComplete(result);
+                $("#delete").modal("show");
+                $("#confirm").off("click");
+                $("#confirm").on("click",function(){
+                    $.ajax({
+                        "url": "${contextPath}/admin/banner/del",
+                        "data": {
+                            "id": id,
+                            "ids":JSON.stringify(ids)
+                        },
+                        "dataType": "json",
+                        "type": "POST",
+                        success: function (result) {
+                            if (result.status) {
+                                $("#delete").modal("hide");
+                                $banner.v.dTable.ajax.reload(null,false);
+                            } else {
+                                $common.fn.notify("操作失败", "error");
+                            }
                         }
-                    })
-                }
+                    });
+                })
             },
             responseComplete: function (result, action) {
                 if (result.status == "0") {
                     if (action) {
-                        _userInfo.v.dTable.ajax.reload(null, false);
+                        $banner.v.dTable.ajax.reload(null, false);
                     } else {
-                        _userInfo.v.dTable.ajax.reload();
+                        $banner.v.dTable.ajax.reload();
                     }
                     $common.fn.notify(result.msg);
                 } else {
@@ -239,7 +235,7 @@
         }
     }
     $(function () {
-        _userInfo.fn.init();
+        $banner.fn.init();
 
     })
 </script>

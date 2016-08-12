@@ -2,13 +2,27 @@ $(function () {
 
     //menu
     $('.dropdown').each(function(){
+
         $(this).find('ul').each(function() {
             var menu_a = $(this).parent().find("a").eq(0).text().trim();
-            var page_title = $("#main input").eq(0).val();
+            //var page_title = $("#main input").eq(0).val();
+            var page_title = $("#mian_module").val();
             if (menu_a == page_title) {
+                $(this).parent().addClass("hovered");
+                $(this).parent().find("a").find("span").addClass("bg");
                 $(this).slideToggle();
             }
         });
+
+        $(this).find('li').each(function() {
+            var a = $(this).find("a").eq(0).text().trim();
+            //var page_title = $("#main input").eq(1).val();
+            var page_title = $("#child_module").val();
+            if (a == page_title) {
+                $(this).find("a").css({"background-color":"rgba(0, 0, 0, 0.5)","color":"#FFD600;","border-left":"solid","border-left-width":"4px","border-left-color":"#FFF"});
+            }
+        });
+
     });
 
     //小提示框

@@ -16,7 +16,8 @@
 <%@ include file="../inc/new/header.jsp" %>
 <div class="clearfix"></div>
 <section id="main" class="p-relative" role="main">
-    <input type="hidden" value="站长工具管理">
+    <input type="hidden" id="mian_module" value="站长工具管理">
+    <input type="hidden" id="child_module" value="意见反馈列表">
     <%@ include file="../inc/new/menu.jsp" %>
     <section id="content" class="container">
         <!-- 查询条件 -->

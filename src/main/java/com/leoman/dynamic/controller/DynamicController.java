@@ -70,22 +70,6 @@ public class DynamicController extends GenericEntityController<Dynamic, Dynamic,
         return "dynamic/detail";
     }
 
-    /**
-     * 删除
-     *
-     * @param id
-     * @return
-     */
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    @ResponseBody
-    public Result delete(Long id) {
-        if (id != null) {
-            dynamicService.delete(dynamicService.queryByPK(id));
-        } else {
-            return Result.failure();
-        }
-        return Result.success();
-    }
 
     /**
      * 跳转编辑页面
@@ -196,24 +180,32 @@ public class DynamicController extends GenericEntityController<Dynamic, Dynamic,
     }
 
     /**
-     * 批量删除
-     *
+     * 删除
+     * @param id
      * @param ids
      * @return
      */
-    @RequestMapping(value = "/batchDel", method = RequestMethod.POST)
+    @RequestMapping(value = "/del")
     @ResponseBody
-    public Result batchDel(String ids) {
-
-        if (StringUtils.isBlank(ids)) return Result.failure();
+    public Result del(Long id,String ids) {
+        if (id == null && StringUtils.isBlank(ids)) {
+            return Result.failure();
+        }
         try {
-            Long[] ss = JsonUtil.json2Obj(ids,Long[].class);
-            for (Long id : ss) {
+            if (id != null) {
                 dynamicService.delete(dynamicService.queryByPK(id));
+            } else {
+                Long[] ss = JsonUtil.json2Obj(ids, Long[].class);
+                for (Long _id : ss) {
+                    dynamicService.delete(dynamicService.queryByPK(_id));
+                }
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
+            return Result.failure();
         }
         return Result.success();
     }
+
+
 }

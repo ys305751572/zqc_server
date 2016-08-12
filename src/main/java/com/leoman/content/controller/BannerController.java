@@ -67,13 +67,29 @@ public class BannerController extends GenericEntityController<Banner, Banner, Ba
         return "banner/detail";
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    /**
+     * 删除
+     * @param id
+     * @param ids
+     * @return
+     */
+    @RequestMapping(value = "/del")
     @ResponseBody
-    public Result delete(Long id) {
-        if (id != null) {
-
-            bannerService.delete(bannerService.queryByPK(id));
-        } else {
+    public Result del(Long id,String ids) {
+        if (id == null && StringUtils.isBlank(ids)) {
+            return Result.failure();
+        }
+        try {
+            if (id != null) {
+                bannerService.delete(bannerService.queryByPK(id));
+            } else {
+                Long[] ss = JsonUtil.json2Obj(ids, Long[].class);
+                for (Long _id : ss) {
+                    bannerService.delete(bannerService.queryByPK(_id));
+                }
+            }
+        } catch (RuntimeException e) {
+            e.printStackTrace();
             return Result.failure();
         }
         return Result.success();
@@ -104,25 +120,4 @@ public class BannerController extends GenericEntityController<Banner, Banner, Ba
         return Result.success();
     }
 
-    /**
-     * 批量删除
-     *
-     * @param ids
-     * @return
-     */
-    @RequestMapping(value = "/batchDel", method = RequestMethod.POST)
-    @ResponseBody
-    public Result batchDel(String ids) {
-
-        if (StringUtils.isBlank(ids)) return Result.failure();
-        try {
-            Long[] ss = JsonUtil.json2Obj(ids,Long[].class);
-            for (Long id : ss) {
-                bannerService.delete(bannerService.queryByPK(id));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return Result.success();
-    }
 }

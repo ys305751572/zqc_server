@@ -51,9 +51,6 @@ public class AdminServiceImpl extends GenericManagerImpl<Admin, AdminDao> implem
         admin.setPassword(Md5Util.md5(Constant.DEFAULT_PASSWORD));
         this.save(admin);
 
-        admin.setUsername(null);
-        admin.setLastLoginDate(123456L);
-        this.save(admin);
     }
 
     public Specification<Admin> buildSpecification(final Admin u) {

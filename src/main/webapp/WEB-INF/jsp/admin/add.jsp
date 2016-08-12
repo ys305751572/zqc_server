@@ -16,7 +16,8 @@
 <%@ include file="../inc/new/header.jsp" %>
 <div class="clearfix"></div>
 <section id="main" class="p-relative" role="main">
-    <input type="hidden" value="权限管理">
+    <input type="hidden" id="main_module" value="权限管理">
+    <input type="hidden" id="child_module" value="管理人员列表">
     <%@ include file="../inc/new/menu.jsp" %>
     <section id="content" class="container">
         <!-- Breadcrumb -->
@@ -34,7 +35,7 @@
                     </div>
                     <div class="col-md-6 m-b-15">
                         <label>手机：</label>
-                        <input type="text" id="mobile" name="mobile" value="${admin.mobile}" class="input-sm form-control validate[required]" placeholder="...">
+                        <input type="text" id="mobile" name="mobile" value="${admin.mobile}" class="input-sm form-control validate[required]" placeholder="..." onkeyup="value=value.replace(/[^0-9]/g,'')" maxlength="11">
                     </div>
                     <div class="col-md-6 m-b-15">
                         <label>密码：</label>

@@ -16,7 +16,8 @@
 <%@ include file="../inc/new/header.jsp" %>
 <div class="clearfix"></div>
 <section id="main" class="p-relative" role="main">
-    <input type="hidden" value="内容管理">
+    <input type="hidden" id="mian_module" value="内容管理">
+    <input type="hidden" id="child_module" value="朋友圈置顶列表">
     <%@ include file="../inc/new/menu.jsp" %>
     <section id="content" class="container">
         <!-- Breadcrumb -->

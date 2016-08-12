@@ -16,7 +16,8 @@
 <%@ include file="../inc/new/header.jsp" %>
 <div class="clearfix"></div>
 <section id="main" class="p-relative" role="main">
-    <input type="hidden" value="权限管理">
+    <input type="hidden" id="main_module" value="权限管理">
+    <input type="hidden" id="child_module" value="管理人员列表">
     <%@ include file="../inc/new/menu.jsp" %>
     <section id="content" class="container">
         <!-- 查询条件 -->
@@ -44,7 +45,7 @@
                         </a>
                     </li>
                     <li class="show-on" style="display: none;">
-                        <a onclick="$admin.fn.betchDel();" title="删除" class="tooltips">
+                        <a onclick="$admin.fn.del();" title="删除" class="tooltips">
                             <i class="sa-list-delete"></i>
                         </a>
                     </li>
@@ -72,6 +73,7 @@
 </section>
 <!-- JS -->
 <%@ include file="../inc/new/foot.jsp" %>
+<%@ include file="../inc/new/del.jsp" %>
 <script>
     $admin = {
         v: {
@@ -139,25 +141,6 @@
                     }
                 });
             },
-            betchDel : function() {
-                var checkBox = $("#dataTables tbody tr").find('input[type=checkbox]:checked');
-                var ids = checkBox.getInputId();
-                $.ajax({
-                    url : "${contextPath}/admin/admin/betchDel",
-                    data : {
-                        "ids" : JSON.stringify(ids)
-                    },
-                    type : "post",
-                    dataType : "json",
-                    success : function(result) {
-                        if(result.status) {
-                            $common.fn.notify(result.msg);
-                            $admin.v.dTable.ajax.reload();
-                        }
-
-                    }
-                });
-            },
             add: function (id){
                 if(id == null) {
                     window.location.href = "${contextPath}/admin/admin/add";
@@ -177,17 +160,35 @@
                     }
                 });
             },
-            del : function(id) {
-                $.post("${contextPath}/admin/admin/delete",{"id":id},function(data) {
-                    if(data.status) {
-                        $common.fn.notify("删除成功");
-                        $admin.v.dTable.ajax.reload();
-                    }
-                    else {
-                        $common.fn.notify("删除失败");
-                    }
-
-                });
+            "del": function (id) {
+                if(id!=null){
+                    $('#showText').html('您确定要彻底删除该管理员吗？');
+                }else{
+                    $('#showText').html('您确定要彻底删除这些管理员吗？');
+                }
+                var checkBox = $("#dataTables tbody tr").find('input[type=checkbox]:checked');
+                var ids = checkBox.getInputId();
+                $("#delete").modal("show");
+                $("#confirm").off("click");
+                $("#confirm").on("click",function(){
+                    $.ajax({
+                        "url": "${contextPath}/admin/admin/del",
+                        "data": {
+                            "id": id,
+                            "ids":JSON.stringify(ids)
+                        },
+                        "dataType": "json",
+                        "type": "POST",
+                        success: function (result) {
+                            if (result.status) {
+                                $("#delete").modal("hide");
+                                $admin.v.dTable.ajax.reload(null,false);
+                            } else {
+                                $common.fn.notify("操作失败", "error");
+                            }
+                        }
+                    });
+                })
             },
             responseComplete: function (result, action) {
                 if (result.status == "0") {

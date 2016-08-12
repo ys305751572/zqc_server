@@ -16,7 +16,8 @@
 <%@ include file="../inc/new/header.jsp" %>
 <div class="clearfix"></div>
 <section id="main" class="p-relative" role="main">
-    <input type="hidden" value="内容管理">
+    <input type="hidden" id="mian_module" value="内容管理">
+    <input type="hidden" id="child_module" value="banner广告列表">
     <%@ include file="../inc/new/menu.jsp" %>
     <section id="content" class="container">
         <!-- Breadcrumb -->
@@ -43,12 +44,12 @@
                     <div class="col-md-6 m-b-15">
                         <label>开始时间</label>
                         <input type="text" id="startDate" name="startDate" value="<date:date value="${banner.startDate}" format="yyyy-MM-dd"></date:date>"
-                               class="input-sm form-control form_datetime validate[required]" placeholder="..." readonly>
+                               class="input-sm form-control form_datetime validate[required]" placeholder="..." >
                     </div>
                     <div class="col-md-6 m-b-15">
                         <label>结束时间</label>
                         <input type="text" id="endDate1" name="endDate1" value="<date:date value="${banner.endDate}" format="yyyy-MM-dd"></date:date>"
-                               class="input-sm form-control form_datetime validate[required]" placeholder="..." readonly>
+                               class="input-sm form-control form_datetime validate[required]" placeholder="..." >
                     </div>
                     <hr class="whiter m-t-20"/>
                     <div class="col-md-12 m-b-15">
@@ -92,7 +93,24 @@
         },
         fn: {
             init: function () {
+                if($("#startDate").val()==""){
+                    $("#endDate1").attr("disabled",true);
+                }
 
+                $("#startDate").change(function(){
+                    if($("#startDate").val()!=""){
+                        $("#endDate1").attr("disabled",false);
+                    }else{
+                        $("#endDate1").attr("disabled",true);
+                    }
+                });
+
+                $("#endDate1").change(function(){
+                    if($("#endDate1").val()<$("#startDate").val()){
+                        $leoman.notify('结束日期不能小于开始日期', "error");
+                        $("#endDate1").val("");
+                    }
+                });
             },
             save: function () {
                 if(!$("#formId").validationEngine("validate")) return;

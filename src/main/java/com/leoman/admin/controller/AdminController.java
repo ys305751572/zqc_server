@@ -55,7 +55,7 @@ public class AdminController extends GenericEntityController<Admin,Admin,AdminSe
 //            e.printStackTrace();
 //        }
 //        return "/admin/add";
-        return "doctor/add";
+        return "admin/add";
      }
 
     /**
@@ -75,40 +75,29 @@ public class AdminController extends GenericEntityController<Admin,Admin,AdminSe
     }
 
     /**
-     * 删除管理员
+     * 删除
      * @param id
-     * @return
-     */
-    @RequestMapping(value = "/delete")
-    @ResponseBody
-    public Result delete(Long id){
-        try {
-            adminService.delete(adminService.queryByPK(id));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return Result.success();
-    }
-
-    /**
-     * 批量删除管理员
      * @param ids
      * @return
      */
-    @RequestMapping(value = "/betchDel")
+    @RequestMapping(value = "/del")
     @ResponseBody
-    public Result betchDel(String ids){
-
+    public Result del(Long id,String ids) {
+        if (id == null && StringUtils.isBlank(ids)) {
+            return Result.failure();
+        }
         try {
-            if(StringUtils.isBlank(ids)) {
-                return Result.failure("请至少选择一条记录");
-            }
-            Long[] arrayId = JsonUtil.json2Obj(ids, Long[].class);
-            for (Long id : arrayId) {
+            if (id != null) {
                 adminService.delete(adminService.queryByPK(id));
+            } else {
+                Long[] ss = JsonUtil.json2Obj(ids, Long[].class);
+                for (Long _id : ss) {
+                    adminService.delete(adminService.queryByPK(_id));
+                }
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
+            return Result.failure();
         }
         return Result.success();
     }
@@ -131,23 +120,4 @@ public class AdminController extends GenericEntityController<Admin,Admin,AdminSe
         return Result.success();
     }
 
-//    @RequestMapping(value = "/status")
-//    @ResponseBody
-//    public Result status(Long id){
-//            Admin admin = adminService.queryByPK(id);
-//            Integer status = admin.getStatus();
-//            try{
-//                if(status == 0) {
-//                    admin.setStatus(1);
-//                    adminService.save(admin);
-//                }else {
-//                    admin.setStatus(0);
-//                    adminService.save(admin);
-//                }
-//            }catch (RuntimeException e){
-//                e.printStackTrace();
-//                return Result.failure();
-//            }
-//            return Result.success();
-//        }
 }

@@ -18,6 +18,13 @@
 <section id="main" class="p-relative" role="main">
     <%@ include file="../inc/new/menu.jsp" %>
     <section id="content" class="container">
+        <input type="hidden" id="mian_module" value="任务管理">
+        <c:if test="${joinType eq 0}">
+            <input type="hidden" id="child_module" value="益起来列表">
+        </c:if>
+        <c:if test="${joinType eq 1}">
+            <input type="hidden" id="child_module" value="脑洞虚设列表">
+        </c:if>
         <!-- 查询条件 -->
         <div class="block-area" id="search">
             <div class="row">

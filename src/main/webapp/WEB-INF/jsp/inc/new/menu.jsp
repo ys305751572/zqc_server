@@ -36,7 +36,7 @@
                 <span class="menu-item">权限管理</span>
             </a>
             <ul class="list-unstyled menu-item">
-                <li><a href="${contextPath}/admin/admin/index">管理人员列表</a></li>
+                <li><a href="${contextPath}/admin/admin/index" >管理人员列表</a></li>
             </ul>
         </li>
         <li class="dropdown">
@@ -44,7 +44,7 @@
                 <span class="menu-item">账号管理</span>
             </a>
             <ul class="list-unstyled menu-item menu_chioce">
-                <li><a href="${contextPath}/admin/userinfo/index">会员列表</a></li>
+                <li><a href="${contextPath}/admin/userinfo/index" >会员列表</a></li>
                 <li><a href="${contextPath}/admin/team/index">团队列表</a></li>
             </ul>
         </li>
@@ -53,7 +53,7 @@
                 <span class="menu-item">内容管理</span>
             </a>
             <ul class="list-unstyled menu-item">
-                <li><a href="${contextPath}/admin/banner/index">bannar广告列表</a></li>
+                <li><a href="${contextPath}/admin/banner/index">banner广告列表</a></li>
                 <li><a href="${contextPath}/admin/dynamic/index">朋友圈置顶列表</a></li>
             </ul>
         </li>
