@@ -198,17 +198,17 @@
                 return Date.parse(date);
             },
             initImage : function() {
-                $('#file-fr').fileinput({
-                    language: 'zh',
-                    uploadAsync: false,
-                    showUpload: false, // hide upload button
-                    showRemove: false, // hide remove button
-                    uploadUrl: '#',
-                    minFileCount: 1,
-                    maxFileCount: 3,
-                    msgFilesTooMany:"只能上传三张图片",
-                    allowedFileExtensions : ['jpg', 'png'],
-                });
+//                $('#file-fr').fileinput({
+//                    language: 'zh',
+//                    uploadAsync: false,
+//                    showUpload: false, // hide upload button
+//                    showRemove: false, // hide remove button
+//                    uploadUrl: '#',
+//                    minFileCount: 1,
+//                    maxFileCount: 3,
+//                    msgFilesTooMany:"只能上传三张图片",
+//                    allowedFileExtensions : ['jpg', 'png'],
+//                });
             }
         }
     }

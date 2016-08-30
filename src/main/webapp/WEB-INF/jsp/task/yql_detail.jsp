@@ -61,12 +61,12 @@
 
                     <div class="col-md-6 m-b-15" >
                         <label>奖励积分:</label>
-                        <input type="text" id="rewardIntegral" name="rewardIntegral" value="${task.rewardIntegral}" class="input-sm form-control validate[required]" placeholder="..." disabled>
+                        <input type="text" id="rewardIntegral" name="rewardIntegral" value="${task.rewardIntegral ne null ? task.rewardIntegral:0}" class="input-sm form-control validate[required]" placeholder="..." disabled>
                     </div>
 
                     <div class="col-md-6 m-b-15" >
                         <label>奖励益米:</label>
-                        <input type="text" id="rewardYm" name="rewardYm" value="${task.rewardYm}" class="input-sm form-control validate[required]" placeholder="..." disabled>
+                        <input type="text" id="rewardYm" name="rewardYm" value="${task.rewardYm ne null ? task.rewardYm:0}" class="input-sm form-control validate[required]" placeholder="..." disabled>
                     </div>
 
                     <hr class="whiter m-t-20"/>

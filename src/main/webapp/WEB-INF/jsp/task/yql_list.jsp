@@ -155,8 +155,8 @@
                         {
                             "data": "",
                             render: function (data,type,full) {
-                                var rewardIntegral = full.rewardIntegral;
-                                var rewardYm = full.rewardYm;
+                                var rewardIntegral = full.rewardIntegral!=null?full.rewardIntegral:'0';
+                                var rewardYm = full.rewardYm!=null?full.rewardYm:'0';
                                 return rewardIntegral+"/"+rewardYm;
                             },
                             "sDefaultContent" : ""},

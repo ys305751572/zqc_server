@@ -135,6 +135,7 @@
                                     <span class="fileupload-exists">更改</span>
                                     <input id="imageFile" name="imageFile" type="file"/>
                                 </span>
+                                <a href="#" class="btn fileupload-exists btn-sm" data-dismiss="fileupload">移除</a>
                             </div>
                         </div>
                     </div>
@@ -150,6 +151,7 @@
                                     <span class="fileupload-exists">更改</span>
                                     <input id="imageFile1" name="imageFile1" type="file"/>
                                 </span>
+                                <a href="#" class="btn fileupload-exists btn-sm" data-dismiss="fileupload">移除</a>
                             </div>
                         </div>
                     </div>
