@@ -76,7 +76,7 @@
                         <p></p>
                         <p></p>
                         <a href="${task.coverUrlAbsolutePath}" data-rel="gallery"  class="pirobox_gall img-popup" title="封面">
-                            <img src="${task.coverUrlAbsolutePath}" alt="">
+                            <img src="${task.coverUrlAbsolutePath}" style="height: 200px;width: 300px; z-index: 1;" alt="">
                         </a>
                     </div>
                     <hr class="whiter m-t-20"/>

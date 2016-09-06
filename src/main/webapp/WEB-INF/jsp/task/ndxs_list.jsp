@@ -121,7 +121,11 @@
                             render: function (data,type,full) {
                                 var coverUrl = full.coverUrlAbsolutePath;
                                 var name = full.name;
-                                return "<img src='"+ coverUrl + "'>"+name;
+                                if(null == coverUrl || coverUrl == ''){
+                                    return name;
+                                }else{
+                                    return "<img src='"+ coverUrl + "' width='50px' height='50px' >"+name;
+                                }
                             },
                             "sDefaultContent" : ""
                         },

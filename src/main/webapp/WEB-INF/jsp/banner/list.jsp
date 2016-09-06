@@ -145,8 +145,12 @@
                         },
                         {
                             "data": "imageUrl",
-                            render : function(data) {
-                                return "<img src='"+ data + "'>";
+                            render: function (data) {
+                                if (null == data || data == '') {
+                                    return "暂无";
+                                } else {
+                                    return '<img src="' + data + '" width="50px" height="50px" />';
+                                }
                             }
                         },
                         {"data": "startDate",
