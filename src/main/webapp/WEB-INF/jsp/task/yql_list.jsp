@@ -105,7 +105,6 @@
                 $("#c_search").click(function () {
                     $task.v.dTable.ajax.reload();
                 });
-
             },
             dataTableInit: function () {
                 $task.v.dTable = $leoman.dataTable($('#dataTables'), {
